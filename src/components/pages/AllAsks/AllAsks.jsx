@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import debounce from "lodash/debounce";
+import * as XLSX from "xlsx";
 
 const AllAsks = () => {
   const [data, setData] = useState([]);
@@ -92,7 +92,7 @@ const AllAsks = () => {
         `http://localhost:3002/myAsk/deleteMyAskById?id=${id}`,
         { withCredentials: true }
       );
-      window.location.reload()
+      window.location.reload();
       fetchAsks(value, currentPage); // Refresh data after deletion
     } catch (error) {
       console.error("Error deleting My Ask:", error);
@@ -101,6 +101,14 @@ const AllAsks = () => {
 
   const getItemId = (index) => {
     return (currentPage - 1) * pageSize + index + 1;
+  };
+
+  // Export to Excel
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Ask List");
+    XLSX.writeFile(workbook, "ask_list.xlsx");
   };
 
   return (
@@ -118,15 +126,11 @@ const AllAsks = () => {
           <button className="px-4 py-2 mt-3 bg-[#CF2030] text-white rounded hover:bg-red-600 transition duration-300">
             <Link to="/addAsksbyEmail">Add Members Asks</Link>
           </button>
-          <button className="px-4 py-2 ml-3 mt-3 bg-[#0fc29e] text-white rounded hover:bg-slate-900 transition duration-300">
-            <ReactHTMLTableToExcel
-              id="test-table-xls-button"
-              className="btn btn-success"
-              table="table-to-xls"
-              filename="ask_list"
-              sheet="ask_list"
-              buttonText="Export to Excel"
-            />
+          <button
+            className="px-4 py-2 ml-3 mt-3 bg-[#0fc29e] text-white rounded hover:bg-slate-900 transition duration-300"
+            onClick={exportToExcel}
+          >
+            Export to Excel
           </button>
         </div>
       </div>
@@ -215,7 +219,7 @@ const AllAsks = () => {
             <p>Message: {modalData.message}</p>
             <button
               onClick={() => setIsModalOpen(false)}
-              className="mt-4 px-4 py-2 bg-[#CF2030] text-white rounded hover:bg-slate-900 transition"
+              className="px-4 py-2 bg-[#CF2030] text-white rounded mt-4 hover:bg-red-600 transition duration-300"
             >
               Close
             </button>

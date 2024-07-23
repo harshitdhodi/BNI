@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { FaEdit, FaTrashAlt , FaEye } from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdEmail, MdPlace } from "react-icons/md";
-import ReactHTMLTableToExcel from "react-html-table-to-excel";
+// import ReactHTMLTableToExcel from "react-html-table-to-excel";
 
 const MemberList = () => {
   const [member, setMember] = useState([]);
