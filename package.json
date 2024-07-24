@@ -33,6 +33,7 @@
     "react-chartjs-2": "^5.2.0",
     "react-country-region-selector": "^3.6.1",
     "react-dom": "^18.2.0",
+    "react-html-table-to-excel": "^2.0.0",
     "react-icons": "^5.2.1",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.23.1",

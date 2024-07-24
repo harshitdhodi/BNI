@@ -60,7 +60,7 @@ const PieChart = () => {
 
   return (
     <div>
-      <h2>Total Asks, Gives, and Matches</h2>
+      <h2 className='font-bold'>Total Asks, Gives, and Matches</h2>
     <div  className='w-[10cm]'>
     <Pie data={chartData} />
     </div>

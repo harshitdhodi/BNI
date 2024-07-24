@@ -137,6 +137,13 @@ export default function Modal({ open, onClose, userData, setUserData }) {
                 onChange={handleFileChange}
                 className="mt-1 block w-full p-3 border border-gray-300 rounded-md"
               />
+              {userData.photo && (
+                <img
+                  src={`http://localhost:3002/image/download/${userData.photo}`}
+                  alt="Selected"
+                  className="mt-4 h-40 w-40 object-cover border border-gray-300 rounded-md"
+                />
+              )}
             </div>
           </>
         ) : (
@@ -160,9 +167,6 @@ export default function Modal({ open, onClose, userData, setUserData }) {
       <DialogActions className="flex justify-between p-4">
         {isEditing ? (
           <>
-            {/* <Button onClick={handleCancelEdit} className="text-red-500">
-              Cancel
-            </Button> */}
             <Button
               onClick={handleFormSubmit}
               className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"

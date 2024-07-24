@@ -26,7 +26,7 @@ const MyBusinessList = () => {
         }`,
         { withCredentials: true, timeout: 5000 }
       );
-
+console.log(response.data.data)
       if (response.data && response.data.data) {
         const dataWithIds = response.data.data.map((business, index) => ({
           ...business,
@@ -119,8 +119,11 @@ const MyBusinessList = () => {
                   className="w-1/2 max-h-60 object-cover mb-2"
                 />
               </div>
+            
             </div>
             <p>
+            <p><strong>Name:</strong> {business.user.name}</p>
+            <p><strong>Email:</strong> {business.user.email}</p>
               <strong>Designation:</strong> {business.designation}
             </p>
             <p>
@@ -138,38 +141,11 @@ const MyBusinessList = () => {
             <p>
               <strong>Contact Links:</strong>
             </p>
-            <ul className="mb-2">
-              <li className="flex">
-                {" "}
-                <a
-                  href={business.contactLinks?.whatsapp || ""}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" />
-                </a>
-                <a
-                  href={business.contactLinks?.facebook || ""}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaFacebook className="w-[25px] h-[25px] text-purple-900" />
-                </a>
-                <a
-                  href={business.contactLinks?.twitter || ""}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" />
-                </a>
-                <a
-                  href={business.contactLinks?.linkedin || ""}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <FaLinkedin className="w-[25px] h-[25px] text-blue-500" />
-                </a>
-              </li>
+            <ul className="mb-2 flex">
+              {business.whatsapp && <li><strong></strong> <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a></li>}
+              {business.facebook && <li><strong></strong> <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a></li>}
+              {business.twitter && <li><strong></strong> <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a></li>}
+              {business.linkedin && <li><strong></strong> <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a></li>}
             </ul>
             {/* <p><strong>Catalog:</strong></p>
             {business.catalog ? (
@@ -225,8 +201,10 @@ const MyBusinessList = () => {
             <thead>
               <tr className="bg-[#CF2030] text-white text-left uppercase font-serif text-[14px]">
                 <th className="py-2 px-6">ID</th>
+                <th className="py-2 px-6">Owner</th>
+                <th className="py-2 px-6">Company Name</th>
                 <th className="py-2 px-6">Profile Image</th>
-                <th className="py-2 px-6">Banner Image</th>
+             
                 <th className="py-2 px-6">Industry Name</th>
                 <th className="py-2 px-6">Contact Links</th>
                 <th className="py-2 px-6">Catalog</th>
@@ -241,6 +219,12 @@ const MyBusinessList = () => {
                 >
                   <td className="py-2 px-6">{business.id}</td>
                   <td className="py-2 px-6">
+               {business.user?.name}
+               </td>
+               <td className="py-2 px-6">
+              {business.companyName}
+               </td>
+                  <td className="py-2 px-6">
                     <img
                       src={`http://localhost:3002/image/download/${business.profileImg}`}
                       alt="Profile"
@@ -249,7 +233,7 @@ const MyBusinessList = () => {
                       className="object-cover"
                     />
                   </td>
-                  <td className="py-2 px-6">
+                  {/* <td className="py-2 px-6">
                     <img
                       src={`http://localhost:3002/image/download/${business.bannerImg}`}
                       alt="Banner"
@@ -257,38 +241,14 @@ const MyBusinessList = () => {
                       height="50"
                       className="object-cover"
                     />
-                  </td>
+                  </td> */}
                   <td className="py-2 px-6">{business.industryName}</td>
                   <td className="py-2 px-6 flex gap-2">
-                    <a
-                      href={business.contactLinks?.whatsapp || ""}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" />
-                    </a>
-                    <a
-                      href={business.contactLinks?.facebook || ""}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FaFacebook className="w-[25px] h-[25px] text-purple-900" />
-                    </a>
-                    <a
-                      href={business.contactLinks?.twitter || ""}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" />
-                    </a>
-                    <a
-                      href={business.contactLinks?.linkedin || ""}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <FaLinkedin className="w-[25px] h-[25px] text-blue-500" />
-                    </a>
-                  </td>
+                {business.whatsapp && <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a>}
+                {business.facebook && <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a>}
+                {business.twitter && <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a>}
+                {business.linkedin && <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a>}
+              </td>
                   <td className="py-2 px-6">
                     {business.catalog ? (
                       <a

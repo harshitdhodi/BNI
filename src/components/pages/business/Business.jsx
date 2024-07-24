@@ -113,11 +113,11 @@ const BusinessList = () => {
               </div>
             </div>
             <p><strong>Contact Links:</strong></p>
-            <ul className="mb-2">
-              {business.whatsapp && <li><strong>WhatsApp:</strong> <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a></li>}
-              {business.facebook && <li><strong>Facebook:</strong> <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a></li>}
-              {business.twitter && <li><strong>Twitter:</strong> <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a></li>}
-              {business.linkedin && <li><strong>LinkedIn:</strong> <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a></li>}
+            <ul className="mb-2 flex gap-2">
+              {business.whatsapp && <li> <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a></li>}
+              {business.facebook && <li> <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a></li>}
+              {business.twitter && <li> <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a></li>}
+              {business.linkedin && <li> <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a></li>}
             </ul>
             <p><strong>Designation:</strong> {business.designation}</p>
             <p><strong>About Company:</strong> {business.aboutCompany}</p>
@@ -147,8 +147,8 @@ const BusinessList = () => {
         <thead>
           <tr className="bg-[#CF2030] text-white text-left uppercase font-serif text-[14px]">
             <th className="py-2 px-6">ID</th>
-            <th className="py-2 px-6">Banner Image</th>
-            <th className="py-2 px-6">Profile Image</th>
+            <th className="py-2 px-6">Owner</th>
+            <th className="py-2 px-6">Company Name</th>
             <th className="py-2 px-6">Contact Links</th>
             <th className="py-2 px-6">Industry</th>
             <th className="py-2 px-6 flex items-center gap-2">Catalog <FaCloudDownloadAlt className="w-5 h-5" /></th>
@@ -163,10 +163,12 @@ const BusinessList = () => {
             >
               <td className="py-2 px-6">{pageIndex * pageSize + index + 1}</td>
               <td className="py-2 px-6">
-                <img src={`http://localhost:3002/image/download/${business.bannerImg}`} alt="Banner" width="50" height="50" />
+               {business.user?.name}
+                {/* <img src={`http://localhost:3002/image/download/${business.bannerImg}`} alt="Banner" width="50" height="50" /> */}
               </td>
               <td className="py-2 px-6">
-                <img src={`http://localhost:3002/image/download/${business.profileImg}`} alt="Profile" width="50" height="50" />
+              {business.companyName}
+                {/* <img src={`http://localhost:3002/image/download/${business.profileImg}`} alt="Profile" width="50" height="50" /> */}
               </td>
               <td className="py-2 px-6 flex gap-2">
                 {business.whatsapp && <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a>}
@@ -212,22 +214,28 @@ const BusinessList = () => {
           ))}
         </tbody>
       </table>
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={handlePreviousPage}
-          disabled={pageIndex === 0}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <button
-          onClick={handleNextPage}
-          disabled={pageIndex === pageCount - 1}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      <div className="mt-4 flex justify-center items-center space-x-2">
+            <button
+              onClick={handlePreviousPage}
+              disabled={pageIndex === 0}
+              className="px-3 py-1 bg-[#CF2030] text-white flex justify-center rounded transition"
+            >
+              {"<"}
+            </button>
+            <button
+              onClick={handleNextPage}
+              disabled={pageIndex + 1 >= pageCount}
+              className="px-3 py-1 bg-[#CF2030] text-white rounded transition"
+            >
+              {">"}
+            </button>
+            <span>
+              Page{" "}
+              <strong>
+                {pageIndex + 1} of {pageCount}
+              </strong>{" "}
+            </span>
+          </div>
       {showModal && <BusinessModal business={selectedBusiness} onClose={closeModal} />}
     </div>
   );

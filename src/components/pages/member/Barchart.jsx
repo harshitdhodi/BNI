@@ -90,7 +90,7 @@ const BarChart = () => {
   };
 
   return (
-    <div className='w-1/2'>
+    <div className='lg:w-1/2 mt-5 p-3'>
       <h2>Total Asks, Gives, and Matches (Bar Chart)</h2>
  
      <Bar data={chartData} options={options} />

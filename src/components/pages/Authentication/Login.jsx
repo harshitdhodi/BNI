@@ -40,7 +40,7 @@ const LoginForm = () => {
 
     try {
       const response = await axios.post(
-        "https://bni-backend-w2c1.onrender.com/user/login",
+        "http://localhost:3002/user/login",
         { email, password },
         { withCredentials: true }
       );

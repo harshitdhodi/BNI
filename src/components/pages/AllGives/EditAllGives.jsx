@@ -12,7 +12,7 @@ const EditAllMyGives = () => {
     phoneNumber: "",
     webURL: "",
     dept: "",
-  });
+  }); 
   const [departments, setDepartments] = useState([]);
   const [companyOptions, setCompanyOptions] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
