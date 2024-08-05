@@ -14,7 +14,7 @@ const EditDepartment = () => {
   const fetchDepartment = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/department/getDepartmentById?id=${id}`,
+        `/api/department/getDepartmentById?id=${id}`,
         { withCredentials: true }
       );
       const { name } = response.data;
@@ -31,7 +31,7 @@ const EditDepartment = () => {
 
     try {
       await axios.put(
-        `http://localhost:3002/department/updateDepartmentById?id=${id}`,
+        `/api/department/updateDepartmentById?id=${id}`,
         departmentData,
         { withCredentials: true }
       );

@@ -13,10 +13,9 @@ const EditIndustry = () => {
 
   const fetchIndustry = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/industry/getIndustryById?id=${id}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/industry/getIndustryById?id=${id}`, {
+        withCredentials: true,
+      });
       const { name } = response.data;
       setName(name);
     } catch (error) {
@@ -30,11 +29,9 @@ const EditIndustry = () => {
     const industryData = { name };
 
     try {
-      await axios.put(
-        `http://localhost:3002/industry/updateIndustry?id=${id}`,
-        industryData,
-        { withCredentials: true }
-      );
+      await axios.put(`/api/industry/updateIndustry?id=${id}`, industryData, {
+        withCredentials: true,
+      });
       setName("");
       navigate("/industryList");
     } catch (error) {

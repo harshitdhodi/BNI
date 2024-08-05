@@ -12,16 +12,12 @@ const CreateIndustry = () => {
     const industryData = { name };
 
     try {
-      const response = await axios.post(
-        "http://localhost:3002/industry/addIndustry",
-        industryData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const response = await axios.post("/api/industry/addIndustry", industryData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
       const { industry, message } = response.data; // Destructure industry and message from response.data
 

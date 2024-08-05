@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { IoLogoWhatsapp } from "react-icons/io";
-import { FaFacebook, FaTwitterSquare, FaLinkedin, FaCloudDownloadAlt, FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaTwitterSquare,
+  FaLinkedin,
+  FaCloudDownloadAlt,
+  FaEdit,
+  FaTrash,
+  FaEye,
+} from "react-icons/fa";
 
 const BusinessList = () => {
   const [businesses, setBusinesses] = useState([]);
@@ -19,7 +27,7 @@ const BusinessList = () => {
   const fetchBusinesses = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/business/getbusiness?page=${pageIndex + 1}&limit=${pageSize}`
+        `/api/business/getbusiness?page=${pageIndex + 1}&limit=${pageSize}`
       );
       setBusinesses(response.data.data);
       setPageCount(Math.ceil(response.data.total / pageSize));
@@ -46,7 +54,7 @@ const BusinessList = () => {
     formData.append("file", file);
 
     try {
-      await axios.post(`http://localhost:3002/business/uploadCatalog?id=${businessId}`, formData, {
+      await axios.post(`/api/business/uploadCatalog?id=${businessId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -64,7 +72,9 @@ const BusinessList = () => {
 
   const handleDelete = async (businessId) => {
     try {
-      await axios.delete(`http://localhost:3002/business/deletebusiness?id=${businessId}`, {withCredentials:true});
+      await axios.delete(`/api/business/deletebusiness?id=${businessId}`, {
+        withCredentials: true,
+      });
       fetchBusinesses(); // Refresh the list after deletion
     } catch (error) {
       console.error("Error deleting business:", error);
@@ -91,38 +101,102 @@ const BusinessList = () => {
             </button>
           </div>
           <div className="mb-4">
-            <p><strong>Name:</strong> {business.user?.name}</p>
-            <p><strong>Email:</strong> {business.user?.email}</p>
-            <p><strong>Industry Name:</strong> {business.industryName}</p>
+            <p>
+              <strong>Name:</strong> {business.user?.name}
+            </p>
+            <p>
+              <strong>Email:</strong> {business.user?.email}
+            </p>
+            <p>
+              <strong>Industry Name:</strong> {business.industryName}
+            </p>
             <div className="flex">
               <div>
-                <p><strong>Profile Image:</strong></p>
+                <p>
+                  <strong>Profile Image:</strong>
+                </p>
                 <img
-                  src={`http://localhost:3002/image/download/${business.profileImg}`}
+                  src={`/api/image/download/${business.profileImg}`}
                   alt="Profile"
                   className="w-1/2 max-h-60 object-cover mb-2"
                 />
               </div>
               <div>
-                <p><strong>Banner Image:</strong></p>
+                <p>
+                  <strong>Banner Image:</strong>
+                </p>
                 <img
-                  src={`http://localhost:3002/image/download/${business.bannerImg}`}
+                  src={`/api/image/download/${business.bannerImg}`}
                   alt="Banner"
                   className="w-1/2 max-h-60 object-cover mb-2"
                 />
               </div>
             </div>
-            <p><strong>Contact Links:</strong></p>
+            <p>
+              <strong>Contact Links:</strong>
+            </p>
             <ul className="mb-2 flex gap-2">
-              {business.whatsapp && <li> <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a></li>}
-              {business.facebook && <li> <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a></li>}
-              {business.twitter && <li> <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a></li>}
-              {business.linkedin && <li> <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a></li>}
+              {business.whatsapp && (
+                <li>
+                  {" "}
+                  <a
+                    href={business.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" />
+                  </a>
+                </li>
+              )}
+              {business.facebook && (
+                <li>
+                  {" "}
+                  <a
+                    href={business.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaFacebook className="w-[25px] h-[25px] text-blue-800" />
+                  </a>
+                </li>
+              )}
+              {business.twitter && (
+                <li>
+                  {" "}
+                  <a
+                    href={business.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" />
+                  </a>
+                </li>
+              )}
+              {business.linkedin && (
+                <li>
+                  {" "}
+                  <a
+                    href={business.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaLinkedin className="w-[25px] h-[25px] text-blue-700" />
+                  </a>
+                </li>
+              )}
             </ul>
-            <p><strong>Designation:</strong> {business.designation}</p>
-            <p><strong>About Company:</strong> {business.aboutCompany}</p>
-            <p><strong>Company Name:</strong> {business.companyName}</p>
-            <p><strong>Company Address:</strong> {business.companyAddress}</p>
+            <p>
+              <strong>Designation:</strong> {business.designation}
+            </p>
+            <p>
+              <strong>About Company:</strong> {business.aboutCompany}
+            </p>
+            <p>
+              <strong>Company Name:</strong> {business.companyName}
+            </p>
+            <p>
+              <strong>Company Address:</strong> {business.companyAddress}
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -136,7 +210,7 @@ const BusinessList = () => {
   };
 
   return (
-    <div className={`p-4 overflow-x-auto ${showModal ? 'modal-open' : ''}`}>
+    <div className={`p-4 overflow-x-auto ${showModal ? "modal-open" : ""}`}>
       <div className="lg:flex flex-wrap justify-between items-center mb-4">
         <h1 className="text-xl font-bold mb-3 ml-2">Business List</h1>
         <button className="px-4 py-2 mt-3 bg-[#CF2030] text-white rounded hover:bg-red-600 transition duration-300">
@@ -151,7 +225,9 @@ const BusinessList = () => {
             <th className="py-2 px-6">Company Name</th>
             <th className="py-2 px-6">Contact Links</th>
             <th className="py-2 px-6">Industry</th>
-            <th className="py-2 px-6 flex items-center gap-2">Catalog <FaCloudDownloadAlt className="w-5 h-5" /></th>
+            <th className="py-2 px-6 flex items-center gap-2">
+              Catalog <FaCloudDownloadAlt className="w-5 h-5" />
+            </th>
             <th className="py-2 px-6">Action</th>
           </tr>
         </thead>
@@ -163,50 +239,85 @@ const BusinessList = () => {
             >
               <td className="py-2 px-6">{pageIndex * pageSize + index + 1}</td>
               <td className="py-2 px-6">
-               {business.user?.name}
-                {/* <img src={`http://localhost:3002/image/download/${business.bannerImg}`} alt="Banner" width="50" height="50" /> */}
+                {business.user?.name}
+                {/* <img src={`/image/download/${business.bannerImg}`} alt="Banner" width="50" height="50" /> */}
               </td>
               <td className="py-2 px-6">
-              {business.companyName}
-                {/* <img src={`http://localhost:3002/image/download/${business.profileImg}`} alt="Profile" width="50" height="50" /> */}
+                {business.companyName}
+                {/* <img src={`/image/download/${business.profileImg}`} alt="Profile" width="50" height="50" /> */}
               </td>
               <td className="py-2 px-6 flex gap-2">
-                {business.whatsapp && <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a>}
-                {business.facebook && <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a>}
-                {business.twitter && <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a>}
-                {business.linkedin && <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a>}
+                {business.whatsapp && (
+                  <a
+                    href={business.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" />
+                  </a>
+                )}
+                {business.facebook && (
+                  <a
+                    href={business.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaFacebook className="w-[25px] h-[25px] text-blue-800" />
+                  </a>
+                )}
+                {business.twitter && (
+                  <a
+                    href={business.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" />
+                  </a>
+                )}
+                {business.linkedin && (
+                  <a
+                    href={business.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaLinkedin className="w-[25px] h-[25px] text-blue-700" />
+                  </a>
+                )}
               </td>
               <td className="py-2 px-6">{business.industryName}</td>
               <td className="py-2 px-6">
-                    {business.catalog ? (
-                      <a
-                        href={`http://localhost:3002/pdf/download/${business.catalog}`}
-                        download
-                      >
-                        <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition">
-                          Download
-                        </button>
-                      </a>
-                    ) : (
-                      <div>
-                        <input
-                          type="file"
-                          accept=".pdf"
-                          onChange={(e) => handleFileChange(e, business._id)}
-                        />
-                      </div>
-                    )}
-                  </td>
+                {business.catalog ? (
+                  <a href={`/pdf/download/${business.catalog}`} download>
+                    <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition">
+                      Download
+                    </button>
+                  </a>
+                ) : (
+                  <div>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => handleFileChange(e, business._id)}
+                    />
+                  </div>
+                )}
+              </td>
               <td className="py-2 px-6 flex gap-2">
-                <button onClick={() => handleViewDetails(business)} className="text-blue-500 hover:text-blue-700">
+                <button
+                  onClick={() => handleViewDetails(business)}
+                  className="text-blue-500 hover:text-blue-700"
+                >
                   <FaEye />
                 </button>
                 <button>
-                        <Link to={`/editMyBusiness/${business._id}`}>
-                          <FaEdit className="text-blue-500 text-lg" />
-                        </Link>
-                      </button>
-                <button onClick={() => handleDelete(business._id)} className="text-red-500 hover:text-red-700">
+                  <Link to={`/editMyBusiness/${business._id}`}>
+                    <FaEdit className="text-blue-500 text-lg" />
+                  </Link>
+                </button>
+                <button
+                  onClick={() => handleDelete(business._id)}
+                  className="text-red-500 hover:text-red-700"
+                >
                   <FaTrash />
                 </button>
               </td>
@@ -215,28 +326,30 @@ const BusinessList = () => {
         </tbody>
       </table>
       <div className="mt-4 flex justify-center items-center space-x-2">
-            <button
-              onClick={handlePreviousPage}
-              disabled={pageIndex === 0}
-              className="px-3 py-1 bg-[#CF2030] text-white flex justify-center rounded transition"
-            >
-              {"<"}
-            </button>
-            <button
-              onClick={handleNextPage}
-              disabled={pageIndex + 1 >= pageCount}
-              className="px-3 py-1 bg-[#CF2030] text-white rounded transition"
-            >
-              {">"}
-            </button>
-            <span>
-              Page{" "}
-              <strong>
-                {pageIndex + 1} of {pageCount}
-              </strong>{" "}
-            </span>
-          </div>
-      {showModal && <BusinessModal business={selectedBusiness} onClose={closeModal} />}
+        <button
+          onClick={handlePreviousPage}
+          disabled={pageIndex === 0}
+          className="px-3 py-1 bg-[#CF2030] text-white flex justify-center rounded transition"
+        >
+          {"<"}
+        </button>
+        <button
+          onClick={handleNextPage}
+          disabled={pageIndex + 1 >= pageCount}
+          className="px-3 py-1 bg-[#CF2030] text-white rounded transition"
+        >
+          {">"}
+        </button>
+        <span>
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageCount}
+          </strong>{" "}
+        </span>
+      </div>
+      {showModal && (
+        <BusinessModal business={selectedBusiness} onClose={closeModal} />
+      )}
     </div>
   );
 };

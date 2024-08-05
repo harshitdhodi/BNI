@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { FaEdit, FaTrashAlt , FaEye } from "react-icons/fa";
+import { FaEdit, FaTrashAlt, FaEye } from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdEmail, MdPlace } from "react-icons/md";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
@@ -34,7 +33,7 @@ const MemberList = () => {
   const fetchMember = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/member/getAllmember?page=${pageIndex + 1}`
+        `/api/member/getAllmember?page=${pageIndex + 1}`
       );
       const dataWithIds = response.data.data.map((customer, index) => ({
         ...customer,
@@ -73,11 +72,10 @@ const MemberList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/member/deletememberById?id=${id}`,
-        { withCredentials: true }
-      );
-    window.location.reload()
+      await axios.delete(`/api/member/deletememberById?id=${id}`, {
+        withCredentials: true,
+      });
+      window.location.reload();
       fetchMember();
     } catch (error) {
       console.error("There was an error deleting the member!", error);
@@ -108,7 +106,7 @@ const MemberList = () => {
   const closeModal = () => {
     setShowModal(false);
   };
-console.log("object" , member)
+  console.log("object", member);
   const MemberModal = ({ member, onClose }) => {
     if (!member) return null;
 
@@ -122,7 +120,7 @@ console.log("object" , member)
                   <strong>Profile Image:</strong>
                 </p>
                 <img
-                  src={`http://localhost:3002/image/download/${member.profileImg}`}
+                  src={`/api/image/download/${member.profileImg}`}
                   alt="Profile"
                   className="w-1/2 max-h-60 object-cover mb-2"
                 />
@@ -132,7 +130,7 @@ console.log("object" , member)
                   <strong>Banner Image:</strong>
                 </p>
                 <img
-                  src={`http://localhost:3002/image/download/${member.bannerImg}`}
+                  src={`/api/image/download/${member.bannerImg}`}
                   alt="Banner"
                   className="w-1/2 max-h-60 object-cover mb-2"
                 />
@@ -224,11 +222,17 @@ console.log("object" , member)
                   <td className="py-2 px-4 lg:px-6">{customer.chapter}</td>
                   <td className="py-2 px-4 lg:px-6">
                     <div>
-                      <p className="flex items-center gap-1 "><BsFillTelephoneFill  className="text-gray-600"/>{customer.mobile}</p>
-                      <p className="flex items-center gap-1" ><MdEmail className="text-gray-600"/> {customer.email}</p>
+                      <p className="flex items-center gap-1 ">
+                        <BsFillTelephoneFill className="text-gray-600" />
+                        {customer.mobile}
+                      </p>
                       <p className="flex items-center gap-1">
-                      <MdPlace className="text-gray-600"/> <span>{customer.country}, </span>
-                     <span>{customer.city}</span>
+                        <MdEmail className="text-gray-600" /> {customer.email}
+                      </p>
+                      <p className="flex items-center gap-1">
+                        <MdPlace className="text-gray-600" />{" "}
+                        <span>{customer.country}, </span>
+                        <span>{customer.city}</span>
                       </p>
                     </div>
                   </td>
@@ -239,8 +243,11 @@ console.log("object" , member)
                   </td>
                   <td className="py-2 px-4 lg:px-6">
                     <div className="flex flex-wrap py-1 px-2 lg:px-4 items-center gap-x-2">
-                      <FaEye   onClick={() => handleViewDetails(customer)}  className="text-green-700"/>
-                    {/* <button
+                      <FaEye
+                        onClick={() => handleViewDetails(customer)}
+                        className="text-green-700"
+                      />
+                      {/* <button
                         onClick={() => handleViewDetails(customer)}
                         className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition"
                       >

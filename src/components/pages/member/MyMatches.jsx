@@ -17,7 +17,11 @@ const MyMatches = () => {
   const fetchMatches = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/match2/myMatchesByCompanyAndDept?companyName=${encodeURIComponent(companyName)}&dept=${encodeURIComponent(dept)}&userId=${encodeURIComponent(userId)}&page=${pageIndex + 1}`,
+        `/api/match2/myMatchesByCompanyAndDept?companyName=${encodeURIComponent(
+          companyName
+        )}&dept=${encodeURIComponent(dept)}&userId=${encodeURIComponent(
+          userId
+        )}&page=${pageIndex + 1}`,
         { withCredentials: true }
       );
 
@@ -40,7 +44,7 @@ const MyMatches = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3002/match2/deleteMatchById?id=${id}`);
+      await axios.delete(`/api/match2/deleteMatchById?id=${id}`);
       fetchMatches(); // Refresh matches after deletion
     } catch (error) {
       console.error("Error deleting Match:", error);
@@ -89,14 +93,26 @@ const MyMatches = () => {
             >
               <td className="py-2 px-4">{match.id}</td>
               <td className="py-2 px-4">
-                <strong>Name:</strong> {match.companyName}<br />
-                <strong>Email:</strong> {match.email}<br />
-                <strong>Department:</strong> {match.dept}<br />
-                <strong>Phone Number:</strong> {match.phoneNumber}<br />
-                <strong>Web URL:</strong> <a href={match.webURL} target="_blank" rel="noopener noreferrer">{match.webURL}</a>
+                <strong>Name:</strong> {match.companyName}
+                <br />
+                <strong>Email:</strong> {match.email}
+                <br />
+                <strong>Department:</strong> {match.dept}
+                <br />
+                <strong>Phone Number:</strong> {match.phoneNumber}
+                <br />
+                <strong>Web URL:</strong>{" "}
+                <a
+                  href={match.webURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {match.webURL}
+                </a>
               </td>
               <td className="py-2 px-4">
-                <strong>Name:</strong> {match.user.name}<br />
+                <strong>Name:</strong> {match.user.name}
+                <br />
                 <strong>Email:</strong> {match.user.email}
               </td>
               {/* <td className="py-2 px-4">

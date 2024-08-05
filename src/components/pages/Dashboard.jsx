@@ -19,47 +19,47 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const TotalAsks = await axios.get("http://localhost:3002/myAsk/getTotalAsks", {
+        const TotalAsks = await axios.get("/api/myAsk/getTotalAsks", {
           withCredentials: true,
         });
         setAsks(TotalAsks.data.TotalMyAsks);
 
-        const TotalGives = await axios.get("http://localhost:3002/myGives/totalGives", {
+        const TotalGives = await axios.get("/api/myGives/totalGives", {
           withCredentials: true,
         });
         setGives(TotalGives.data.total);
 
-        const TotalCompany = await axios.get("http://localhost:3002/company/totalCompany", {
+        const TotalCompany = await axios.get("/api/company/totalCompany", {
           withCredentials: true,
         });
         setCompany(TotalCompany.data.TotalCompany);
 
-        const TotalBusiness = await axios.get("http://localhost:3002/business/totalbusiness", {
+        const TotalBusiness = await axios.get("/api/business/totalbusiness", {
           withCredentials: true,
         });
         setBusiness(TotalBusiness.data.Totalbusiness);
 
-        const TotalChapter = await axios.get("http://localhost:3002/chapter/totalchapter", {
+        const TotalChapter = await axios.get("/api/chapter/totalchapter", {
           withCredentials: true,
         });
         setChapter(TotalChapter.data.TotalChapters);
 
-        const TotalCity = await axios.get("http://localhost:3002/city/totalCity", {
+        const TotalCity = await axios.get("/api/city/totalCity", {
           withCredentials: true,
         });
         setCity(TotalCity.data.TotalCitys);
 
-        const TotalCountry = await axios.get("http://localhost:3002/country/totalCountry", {
+        const TotalCountry = await axios.get("/api/country/totalCountry", {
           withCredentials: true,
         });
         setCountry(TotalCountry.data.TotalCountries);
 
-        const TotalDepartment = await axios.get("http://localhost:3002/department/totalDepartment", {
+        const TotalDepartment = await axios.get("/api/department/totalDepartment", {
           withCredentials: true,
         });
         setDepartment(TotalDepartment.data.TotalDepartments);
 
-        const TotalCustomer = await axios.get("http://localhost:3002/member/totalmember", {
+        const TotalCustomer = await axios.get("/api/member/totalmember", {
           withCredentials: true,
         });
         setCustomer(TotalCustomer.data.Totalmembers);

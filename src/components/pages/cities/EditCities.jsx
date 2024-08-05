@@ -17,12 +17,9 @@ const EditCity = () => {
 
   const fetchCity = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/city/getCityById?id=${id}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`/api/city/getCityById?id=${id}`, {
+        withCredentials: true,
+      });
       const { name, countryName } = response.data;
       console.log(response.data);
 
@@ -65,16 +62,12 @@ const EditCity = () => {
     try {
       if (id) {
         // Update existing city
-        await axios.put(
-          `http://localhost:3002/city/updateCity?id=${id}`,
-          cityData,
-          {
-            withCredentials: true,
-          }
-        );
+        await axios.put(`/api/city/updateCity?id=${id}`, cityData, {
+          withCredentials: true,
+        });
       } else {
         // Create new city
-        await axios.post("http://localhost:3002/city/addCity", cityData);
+        await axios.post("/api/city/addCity", cityData);
       }
       setName("");
       setCountryName("");
@@ -108,19 +101,7 @@ const EditCity = () => {
           {id ? "Edit City" : "Create City"}
         </h1>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">
-              City Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={name}
-              onChange={handleInputChange}
-              className="w-1/2 px-4 py-2 border rounded-md focus:outline-none focus:border-red-500 transition duration-300"
-              required
-            />
-          </div>
+         
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               Select Country
@@ -132,6 +113,19 @@ const EditCity = () => {
                 (option) => option.label === countryName
               )}
               className="w-1/2"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              City Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={name}
+              onChange={handleInputChange}
+              className="w-1/2 px-4 py-2 border rounded-md focus:outline-none focus:border-red-500 transition duration-300"
+              required
             />
           </div>
           <button

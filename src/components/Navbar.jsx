@@ -21,12 +21,9 @@ export default function Navbar({ toggleSidebar }) {
   // Fetch user data function
   const fetchUserData = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/user/getUserById`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`/api/user/getUserById`, {
+        withCredentials: true,
+      });
       setUserData(response.data.data);
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -51,7 +48,7 @@ export default function Navbar({ toggleSidebar }) {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:3002/user/logout");
+      await axios.post("/api/user/logout");
       console.log("User logged out successfully");
       Cookies.remove("token");
       window.location.href = "/login";
@@ -97,7 +94,7 @@ export default function Navbar({ toggleSidebar }) {
             )}
             {userData.photo ? (
               <img
-                src={`http://localhost:3002/image/download/${userData.photo}`}
+                src={`/api/image/download/${userData.photo}`}
                 alt="User Profile"
                 className="w-8 h-8 rounded-full"
               />

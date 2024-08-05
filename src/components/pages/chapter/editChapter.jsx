@@ -18,12 +18,9 @@ const EditChapter = () => {
 
   const fetchChapter = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/chapter/getchapterById?id=${id}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`/api/chapter/getchapterById?id=${id}`, {
+        withCredentials: true,
+      });
       const { name, countryName, city } = response.data;
 
       setName(name);
@@ -96,13 +93,9 @@ const EditChapter = () => {
     };
 
     try {
-      await axios.put(
-        `http://localhost:3002/chapter/updateChapter?id=${id}`,
-        chapterData,
-        {
-          withCredentials: true,
-        }
-      );
+      await axios.put(`/api/chapter/updateChapter?id=${id}`, chapterData, {
+        withCredentials: true,
+      });
       setName("");
       setCountry(null);
       setCity(null);

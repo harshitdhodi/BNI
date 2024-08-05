@@ -15,9 +15,7 @@ const CityList = () => {
 
   const fetchCities = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/city/getCity?page=${pageIndex + 1}`
-      );
+      const response = await axios.get(`/api/city/getCity?page=${pageIndex + 1}`);
       console.log(response.data.data);
       const dataWithIds = response.data.data.map((city, index) => ({
         ...city,
@@ -44,7 +42,7 @@ const CityList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3002/city/deleteCity?id=${id}`);
+      await axios.delete(`/api/city/deleteCity?id=${id}`);
       fetchCities();
     } catch (error) {
       console.error("There was an error deleting the city!", error);

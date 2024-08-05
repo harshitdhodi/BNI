@@ -14,13 +14,13 @@ const CreateDepartment = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/department/addDepartment",
+        "/api/department/addDepartment",
         departmentData,
         {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials:true,
+          withCredentials: true,
         }
       );
 

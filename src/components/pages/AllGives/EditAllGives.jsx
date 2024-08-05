@@ -12,7 +12,7 @@ const EditAllMyGives = () => {
     phoneNumber: "",
     webURL: "",
     dept: "",
-  }); 
+  });
   const [departments, setDepartments] = useState([]);
   const [companyOptions, setCompanyOptions] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
@@ -25,10 +25,9 @@ const EditAllMyGives = () => {
 
   const fetchMyGive = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/myGives/getmyGivesById?id=${id}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/myGives/getmyGivesById?id=${id}`, {
+        withCredentials: true,
+      });
       console.log("API response:", response);
 
       const myGiveData = response.data.data;
@@ -48,10 +47,13 @@ const EditAllMyGives = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/department/getAllDepartment");
+      const response = await axios.get("/api/department/getAllDepartment");
       setDepartments(response.data.data);
     } catch (error) {
-      console.error("Failed to fetch departments:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch departments:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -67,11 +69,9 @@ const EditAllMyGives = () => {
     e.preventDefault();
 
     try {
-      await axios.put(
-        `http://localhost:3002/myGives/updateMyGives?id=${id}`,
-        myGive,
-        { withCredentials: true }
-      );
+      await axios.put(`/myGives/updateMyGives?id=${id}`, myGive, {
+        withCredentials: true,
+      });
       navigate(`/allGives`);
     } catch (error) {
       console.error(
@@ -83,10 +83,16 @@ const EditAllMyGives = () => {
 
   const fetchCompanyOptions = async (searchTerm) => {
     try {
-      const response = await axios.get(`http://localhost:3002/company/getFilteredGives?companyName=${searchTerm}`, { withCredentials: true });
+      const response = await axios.get(
+        `/company/getFilteredGives?companyName=${searchTerm}`,
+        { withCredentials: true }
+      );
       setCompanyOptions(response.data.companies || []);
     } catch (error) {
-      console.error("Failed to fetch company options:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch company options:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -97,7 +103,10 @@ const EditAllMyGives = () => {
           <Link to="/" className="mr-2 text-red-300 hover:text-red-500">
             Dashboard /
           </Link>
-          <Link to={`/allGives`} className="mr-2 text-red-300 hover:text-red-500">
+          <Link
+            to={`/allGives`}
+            className="mr-2 text-red-300 hover:text-red-500"
+          >
             My Gives /
           </Link>
           <Link className="font-semibold text-red-500"> Edit My Gives</Link>
@@ -119,7 +128,12 @@ const EditAllMyGives = () => {
               }}
               onChange={(event, newValue) => {
                 setSelectedCompany(newValue);
-                handleChange({ target: { name: "companyName", value: newValue ? newValue.companyName : "" } });
+                handleChange({
+                  target: {
+                    name: "companyName",
+                    value: newValue ? newValue.companyName : "",
+                  },
+                });
               }}
               renderInput={(params) => (
                 <TextField
@@ -132,46 +146,48 @@ const EditAllMyGives = () => {
               )}
             />
           </div>
-          {Object.keys(myGive).map((key) =>
-            key !== "_id" &&
-            key !== "createdAt" &&
-            key !== "updatedAt" &&
-            key !== "user" &&
-            key !== "__v" &&
-            key !== "companyName" && ( // Exclude the companyName field here
-              <div className="mb-4" key={key}>
-                <label htmlFor={key} className="block font-semibold mb-2">
-                  {key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ")}
-                </label>
-                {key === "dept" ? (
-                  <select
-                    id={key}
-                    name={key}
-                    value={myGive[key]}
-                    onChange={handleChange}
-                    className="w-1/2 p-2 border rounded focus:outline-none focus:border-red-500"
-                    required
-                  >
-                    <option value="">Select Department</option>
-                    {departments.map((dept) => (
-                      <option key={dept._id} value={dept.name}>
-                        {dept.name}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    id={key}
-                    name={key}
-                    value={myGive[key]}
-                    onChange={handleChange}
-                    className="w-1/2 p-2 border rounded focus:outline-none focus:border-red-500"
-                    required
-                  />
-                )}
-              </div>
-            )
+          {Object.keys(myGive).map(
+            (key) =>
+              key !== "_id" &&
+              key !== "createdAt" &&
+              key !== "updatedAt" &&
+              key !== "user" &&
+              key !== "__v" &&
+              key !== "companyName" && ( // Exclude the companyName field here
+                <div className="mb-4" key={key}>
+                  <label htmlFor={key} className="block font-semibold mb-2">
+                    {key.charAt(0).toUpperCase() +
+                      key.slice(1).replace("_", " ")}
+                  </label>
+                  {key === "dept" ? (
+                    <select
+                      id={key}
+                      name={key}
+                      value={myGive[key]}
+                      onChange={handleChange}
+                      className="w-1/2 p-2 border rounded focus:outline-none focus:border-red-500"
+                      required
+                    >
+                      <option value="">Select Department</option>
+                      {departments.map((dept) => (
+                        <option key={dept._id} value={dept.name}>
+                          {dept.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      id={key}
+                      name={key}
+                      value={myGive[key]}
+                      onChange={handleChange}
+                      className="w-1/2 p-2 border rounded focus:outline-none focus:border-red-500"
+                      required
+                    />
+                  )}
+                </div>
+              )
           )}
           <button
             type="submit"

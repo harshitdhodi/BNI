@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const AddBusiness = () => {
-  const [companyName, setCompanyName] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
-  const [facebook, setFacebook] = useState('');
-  const [linkedin, setLinkedin] = useState('');
-  const [twitter, setTwitter] = useState('');
-  const [industryName, setIndustryName] = useState('');
+  const [companyName, setCompanyName] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const [industryName, setIndustryName] = useState("");
   const [industries, setIndustries] = useState([]);
-  const [designation, setDesignation] = useState('');
-  const [aboutCompany, setAboutCompany] = useState('');
-  const [companyAddress, setCompanyAddress] = useState('');
+  const [designation, setDesignation] = useState("");
+  const [aboutCompany, setAboutCompany] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
   const [bannerImg, setBannerImg] = useState(null);
   const [profileImg, setProfileImg] = useState(null);
   const [catalog, setCatalog] = useState(null);
@@ -22,10 +22,10 @@ const AddBusiness = () => {
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        const response = await axios.get('http://localhost:3002/industry/getAllIndustry');
+        const response = await axios.get("/industry/getAllIndustry");
         setIndustries(response.data.data);
       } catch (error) {
-        console.error('Error fetching industries:', error);
+        console.error("Error fetching industries:", error);
         setIndustries([]);
       }
     };
@@ -35,43 +35,48 @@ const AddBusiness = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('userId:', userId);
+    console.log("userId:", userId);
     const formData = new FormData();
-  
-    formData.append('companyName', companyName);
-    formData.append('whatsapp', whatsapp);
-    formData.append('facebook', facebook);
-    formData.append('linkedin', linkedin);
-    formData.append('twitter', twitter);
-    formData.append('industryName', industryName);
-    formData.append('designation', designation);
-    formData.append('aboutCompany', aboutCompany);
-    formData.append('companyAddress', companyAddress);
-    if (bannerImg) formData.append('bannerImg', bannerImg);
-    if (profileImg) formData.append('profileImg', profileImg);
-    if (catalog) formData.append('catalog', catalog);
+
+    formData.append("companyName", companyName);
+    formData.append("whatsapp", whatsapp);
+    formData.append("facebook", facebook);
+    formData.append("linkedin", linkedin);
+    formData.append("twitter", twitter);
+    formData.append("industryName", industryName);
+    formData.append("designation", designation);
+    formData.append("aboutCompany", aboutCompany);
+    formData.append("companyAddress", companyAddress);
+    if (bannerImg) formData.append("bannerImg", bannerImg);
+    if (profileImg) formData.append("profileImg", profileImg);
+    if (catalog) formData.append("catalog", catalog);
     console.log("FormData:", formData);
-  
+
     try {
-      const response = await axios.post(`http://localhost:3002/business/createProfile?user=${userId}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: true,
-      });
-      console.log('Business profile created:', response.data);
-  
+      const response = await axios.post(
+        `/api/business/createProfile?user=${userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log("Business profile created:", response.data);
+
       if (window.location.href === "http://localhost:5173/business_form") {
         navigate(`/business`);
       } else {
         navigate(`/myBusiness/${userId}`);
       }
-      
     } catch (error) {
-      console.error('Error creating business profile:', error.response ? error.response.data : error.message);
+      console.error(
+        "Error creating business profile:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
-  
 
   return (
     <>
@@ -80,8 +85,12 @@ const AddBusiness = () => {
           <Link to="/" className="mr-2 text-red-300 hover:text-red-600">
             Dashboard /
           </Link>
-          <Link 
-            to={window.location.href === "http://localhost:5173/business_form" ? `/business` : `/myBusiness/${userId}`} 
+          <Link
+            to={
+              window.location.href === "http://localhost:5173/business_form"
+                ? `/business`
+                : `/myBusiness/${userId}`
+            }
             className="mr-2 text-red-300 hover:text-red-600"
           >
             My Business /
@@ -93,7 +102,9 @@ const AddBusiness = () => {
         <h1 className="text-xl font-bold mb-4">Add Business</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Company Name</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Company Name
+            </label>
             <input
               type="text"
               value={companyName}
@@ -103,7 +114,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">WhatsApp</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              WhatsApp
+            </label>
             <input
               type="text"
               value={whatsapp}
@@ -112,7 +125,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Facebook</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Facebook
+            </label>
             <input
               type="text"
               value={facebook}
@@ -121,7 +136,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">LinkedIn</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              LinkedIn
+            </label>
             <input
               type="text"
               value={linkedin}
@@ -130,7 +147,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Twitter</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Twitter
+            </label>
             <input
               type="text"
               value={twitter}
@@ -139,21 +158,29 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Industry Name</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Industry Name
+            </label>
             <select
               value={industryName}
               onChange={(e) => setIndustryName(e.target.value)}
               className="lg:w-1/2 w-full px-4 py-2 border rounded-md focus:outline-none focus:border-red-500 transition duration-300"
               required
             >
-              <option value="" disabled>Select Industry</option>
+              <option value="" disabled>
+                Select Industry
+              </option>
               {industries.map((industry) => (
-                <option key={industry._id} value={industry.name}>{industry.name}</option>
+                <option key={industry._id} value={industry.name}>
+                  {industry.name}
+                </option>
               ))}
             </select>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Designation</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Designation
+            </label>
             <input
               type="text"
               value={designation}
@@ -163,7 +190,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">About Company</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              About Company
+            </label>
             <textarea
               value={aboutCompany}
               onChange={(e) => setAboutCompany(e.target.value)}
@@ -172,7 +201,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Company Address</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Company Address
+            </label>
             <input
               type="text"
               value={companyAddress}
@@ -182,7 +213,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Banner Image</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Banner Image
+            </label>
             <input
               type="file"
               onChange={(e) => setBannerImg(e.target.files[0])}
@@ -190,7 +223,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Profile Image</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Profile Image
+            </label>
             <input
               type="file"
               onChange={(e) => setProfileImg(e.target.files[0])}
@@ -198,7 +233,9 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Catalog (PDF)</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Catalog (PDF)
+            </label>
             <input
               type="file"
               onChange={(e) => setCatalog(e.target.files[0])}

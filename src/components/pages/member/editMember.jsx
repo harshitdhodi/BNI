@@ -43,10 +43,9 @@ const EditMember = () => {
 
   const fetchMember = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/member/getUserById?id=${id}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/member/getUserById?id=${id}`, {
+        withCredentials: true,
+      });
       const memberData = response.data.data;
       setMember(memberData);
     } catch (error) {
@@ -56,10 +55,9 @@ const EditMember = () => {
 
   const fetchCountries = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/country/getCountry?page=1&limit=100`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/country/getCountry?page=1&limit=100`, {
+        withCredentials: true,
+      });
       setCountries(response.data.data);
     } catch (error) {
       console.error("Error fetching countries:", error);
@@ -68,10 +66,9 @@ const EditMember = () => {
 
   const fetchCities = async (country) => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/city/getAllCity?country=${country}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/city/getAllCity?country=${country}`, {
+        withCredentials: true,
+      });
       setCities(response.data.data);
     } catch (error) {
       console.error("Error fetching cities:", error);
@@ -82,7 +79,7 @@ const EditMember = () => {
   const fetchChapters = async (city) => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/chapter/getChapterByCity?city=${city}`,
+        `/api/chapter/getChapterByCity?city=${city}`,
         { withCredentials: true }
       );
       setChapters(response.data || []);
@@ -172,16 +169,12 @@ const EditMember = () => {
       formData.append("profileImg", member.profileImg); // Append profile image file
       formData.append("bannerImg", member.bannerImg); // Append banner image file
 
-      await axios.put(
-        `http://localhost:3002/member/updatememberById?id=${id}`,
-        formData,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      await axios.put(`/api/member/updatememberById?id=${id}`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       navigate("/memberList");
     } catch (error) {
       console.error(
@@ -198,7 +191,10 @@ const EditMember = () => {
           <Link to="/" className="mr-2 text-red-300 hover:text-red-500">
             Dashboard /
           </Link>
-          <Link to="/memberList" className="mr-2 text-red-300 hover:text-red-500">
+          <Link
+            to="/memberList"
+            className="mr-2 text-red-300 hover:text-red-500"
+          >
             Members /
           </Link>
           <Link className="font-semibold text-red-500"> Edit Member</Link>
@@ -207,100 +203,116 @@ const EditMember = () => {
       <div className="p-4">
         <h1 className="text-xl font-bold mb-4">Edit Member</h1>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          {Object.keys(member).map((key) => (
-            key !== "_id" &&
-            key !== "resetOTP" &&
-            key !== "password" &&
-            key !== "confirm_password" &&
-            key !== "__v" && (
-              <div className="mb-4" key={key}>
-                <label htmlFor={key} className="block font-semibold mb-2">
-                  {key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ")}
-                </label>
-                {key === "country" ? (
-                  <Autocomplete
-                    id={key}
-                    options={countries}
-                    getOptionLabel={(option) => option.name}
-                    value={countries.find((country) => country.name === member.country) || null}
-                    onChange={handleCountryChange}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="outlined"
-                        className="w-full p-2 border rounded focus:outline-none  focus:border-black-500"
-                        required
+          {Object.keys(member).map(
+            (key) =>
+              key !== "_id" &&
+              key !== "resetOTP" &&
+              key !== "password" &&
+              key !== "confirm_password" &&
+              key !== "__v" && (
+                <div className="mb-4" key={key}>
+                  <label htmlFor={key} className="block font-semibold mb-2">
+                    {key.charAt(0).toUpperCase() +
+                      key.slice(1).replace("_", " ")}
+                  </label>
+                  {key === "country" ? (
+                    <Autocomplete
+                      id={key}
+                      options={countries}
+                      getOptionLabel={(option) => option.name}
+                      value={
+                        countries.find(
+                          (country) => country.name === member.country
+                        ) || null
+                      }
+                      onChange={handleCountryChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          className="w-full p-2 border rounded focus:outline-none  focus:border-black-500"
+                          required
+                        />
+                      )}
+                    />
+                  ) : key === "city" ? (
+                    <Autocomplete
+                      id={key}
+                      options={cities}
+                      getOptionLabel={(option) => option.name}
+                      value={
+                        cities.find((city) => city.name === member.city) || null
+                      }
+                      onChange={handleCityChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          className="w-full p-2 border rounded focus:outline-none focus:border-red-500"
+                          required
+                        />
+                      )}
+                    />
+                  ) : key === "chapter" ? (
+                    <Autocomplete
+                      id={key}
+                      options={chapters}
+                      getOptionLabel={(option) => option.name}
+                      value={
+                        chapters.find(
+                          (chapter) => chapter.name === member.chapter
+                        ) || null
+                      }
+                      onChange={handleChapterChange}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          variant="outlined"
+                          className="w-full p-2 border rounded focus:outline-none hover:border-red-500"
+                          required
+                        />
+                      )}
+                    />
+                  ) : key === "profileImg" || key === "bannerImg" ? (
+                    <>
+                      <input
+                        type="file"
+                        id={key}
+                        name={key}
+                        onChange={
+                          key === "profileImg"
+                            ? handleProfileImgChange
+                            : handleBannerImgChange
+                        }
+                        accept="image/*"
+                        className="w-full p-4 border bg-[#F1F1F1] border-[#aeabab] rounded focus:outline-none focus:border-black hover:border-black"
                       />
-                    )}
-                  />
-                ) : key === "city" ? (
-                  <Autocomplete
-                    id={key}
-                    options={cities}
-                    getOptionLabel={(option) => option.name}
-                    value={cities.find((city) => city.name === member.city) || null}
-                    onChange={handleCityChange}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="outlined"
-                        className="w-full p-2 border rounded focus:outline-none focus:border-red-500"
-                        required
-                      />
-                    )}
-                  />
-                ) : key === "chapter" ? (
-                  <Autocomplete
-                    id={key}
-                    options={chapters}
-                    getOptionLabel={(option) => option.name}
-                    value={chapters.find((chapter) => chapter.name === member.chapter) || null}
-                    onChange={handleChapterChange}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        variant="outlined"
-                        className="w-full p-2 border rounded focus:outline-none hover:border-red-500"
-                        required
-                      />
-                    )}
-                  />
-                ) : key === "profileImg" || key === "bannerImg" ? (
-                  <>
+                      {member[key] && (
+                        <div className="mt-2">
+                          <img
+                            src={`/image/download/${member[key]}`}
+                            alt=""
+                            className="w-20 h-20 object-cover rounded"
+                          />
+                        </div>
+                      )}
+                    </>
+                  ) : (
                     <input
-                      type="file"
+                      type={key === "keyword" ? "text" : "text"}
                       id={key}
                       name={key}
-                      onChange={key === "profileImg" ? handleProfileImgChange : handleBannerImgChange}
-                      accept="image/*"
+                      value={member[key]}
+                      onChange={handleChange}
                       className="w-full p-4 border bg-[#F1F1F1] border-[#aeabab] rounded focus:outline-none focus:border-black hover:border-black"
+                      required
                     />
-                    {member[key] && (
-                      <div className="mt-2">
-                        <img
-                          src={`http://localhost:3002/image/download/${member[key]}`}
-                          alt=""
-                          className="w-20 h-20 object-cover rounded"
-                        />
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <input
-                    type={key === "keyword" ? "text" : "text"}
-                    id={key}
-                    name={key}
-                    value={member[key]}
-                    onChange={handleChange}
-                    className="w-full p-4 border bg-[#F1F1F1] border-[#aeabab] rounded focus:outline-none focus:border-black hover:border-black"
-                    required
-                  />
-                )}
-              </div>
-            )
-          ))}
+                  )}
+                </div>
+              )
+          )}
           <br />
-     <button
+          <button
             type="submit"
             className="px-4 py-2 w-[5cm] bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
           >

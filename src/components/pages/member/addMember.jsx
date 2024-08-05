@@ -28,11 +28,11 @@ const CreateUser = () => {
   useEffect(() => {
     setCountries(Country.getAllCountries());
   }, []);
-   
+
   useEffect(() => {
     if (country) {
       axios
-        .get(`http://localhost:3002/city/getCityByCountry?countryName=${country.name}`)
+        .get(`/api/city/getCityByCountry?countryName=${country.name}`)
         .then((response) => {
           const citiesData = response.data;
           if (Array.isArray(citiesData)) {
@@ -53,7 +53,7 @@ const CreateUser = () => {
   useEffect(() => {
     if (city) {
       axios
-        .get(`http://localhost:3002/chapter/getChapterByCity?city=${city.name}`)
+        .get(`/api/chapter/getChapterByCity?city=${city.name}`)
         .then((response) => {
           const chaptersData = response.data;
           if (Array.isArray(chaptersData)) {
@@ -83,55 +83,50 @@ const CreateUser = () => {
     setKeywords(keywords.filter((kw) => kw !== keywordToDelete));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (password !== confirmPassword) {
-    alert("Passwords do not match.");
-    return;
-  }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
 
-  // Convert keywords array to a single string
-  const keywordString = keywords.join(", "); // Adjust the delimiter as needed
+    // Convert keywords array to a single string
+    const keywordString = keywords.join(", "); // Adjust the delimiter as needed
 
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("email", email);
-  formData.append("password", password);
-  formData.append("confirm_password", confirmPassword);
-  formData.append("country", country ? country.name : "");
-  formData.append("city", city ? city.name : "");
-  formData.append("chapter", chapter ? chapter.name : "");
-  formData.append("mobile", mobile);
-  formData.append("keyword", keywordString); // Use keywordString here
-  if (profileImg) formData.append("profileImg", profileImg);
-  if (bannerImg) formData.append("bannerImg", bannerImg);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("confirm_password", confirmPassword);
+    formData.append("country", country ? country.name : "");
+    formData.append("city", city ? city.name : "");
+    formData.append("chapter", chapter ? chapter.name : "");
+    formData.append("mobile", mobile);
+    formData.append("keyword", keywordString); // Use keywordString here
+    if (profileImg) formData.append("profileImg", profileImg);
+    if (bannerImg) formData.append("bannerImg", bannerImg);
 
-  try {
-    // setLoading(true); // Set loading state to true++
-    const response = await axios.post(
-      "http://localhost:3002/member/register",
-      formData,
-      {
+    try {
+      // setLoading(true); // Set loading state to true++
+      const response = await axios.post("/api/member/register", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
-    );
+      });
 
-    console.log(response.data);
+      console.log(response.data);
 
-    navigate("/memberList");
-  } catch (error) {
-    console.error(
-      "Failed to create user:",
-      error.response ? error.response.data : error.message
-    );
-  } finally {
-    setLoading(false); // Set loading state to false
-  }
-};
-
+      navigate("/memberList");
+    } catch (error) {
+      console.error(
+        "Failed to create user:",
+        error.response ? error.response.data : error.message
+      );
+    } finally {
+      setLoading(false); // Set loading state to false
+    }
+  };
 
   return (
     <>
@@ -174,7 +169,9 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Password</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -184,7 +181,9 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Confirm Password</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Confirm Password
+            </label>
             <input
               type="password"
               value={confirmPassword}
@@ -194,7 +193,9 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Country</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Country
+            </label>
             <Autocomplete
               options={countries}
               getOptionLabel={(option) => option.name}
@@ -231,7 +232,9 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Chapter</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Chapter
+            </label>
             <Autocomplete
               options={chapters}
               getOptionLabel={(option) => option.name}
@@ -250,7 +253,9 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Mobile Number</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Mobile Number
+            </label>
             <input
               type="text"
               value={mobile}
@@ -260,7 +265,9 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div className="col-span-2">
-            <label className="block text-gray-700 font-bold mb-2">Keyword</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Keyword
+            </label>
             <div className="flex">
               <input
                 type="text"
@@ -290,7 +297,9 @@ const handleSubmit = async (e) => {
             </div>
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Profile Image</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Profile Image
+            </label>
             <input
               type="file"
               onChange={(e) => setProfileImg(e.target.files[0])}
@@ -298,7 +307,9 @@ const handleSubmit = async (e) => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Banner Image</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Banner Image
+            </label>
             <input
               type="file"
               onChange={(e) => setBannerImg(e.target.files[0])}

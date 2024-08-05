@@ -16,7 +16,7 @@ const CountryList = () => {
   const fetchCountries = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/country/getCountry?page=${pageIndex + 1}`
+        `/api/country/getCountry?page=${pageIndex + 1}`
       );
       const dataWithIds = response.data.data.map((country, index) => ({
         ...country,
@@ -43,9 +43,7 @@ const CountryList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/country/deleteCountry?id=${id}`
-      );
+      await axios.delete(`/api/country/deleteCountry?id=${id}`);
       fetchCountries();
     } catch (error) {
       console.error("There was an error deleting the country!", error);

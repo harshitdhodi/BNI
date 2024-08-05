@@ -2,48 +2,65 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { TextField, Autocomplete, Button } from "@mui/material";
-import { Country, City } from "country-state-city"; // Import Country and City modules from country-state-city
+import { Country } from "country-state-city";
 
 const CreateChapter = () => {
   const [name, setName] = useState("");
   const [country, setCountry] = useState(null);
   const [city, setCity] = useState(null);
-  const [cities, setCities] = useState([]); // Initialize cities state
+  const [cities, setCities] = useState([]);
+  const [countryData, setCountryData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fetch all countries with their short codes
-    const countryData = Country.getAllCountries().map((country) => ({
-      isoCode: country.isoCode,
-      name: `${country.name} (${country.isoCode})`,
-    }));
-
-    // Set default cities for the initial selected country
-    if (country) {
-      const citiesOfCountry = City.getCitiesOfCountry(country.isoCode);
-      setCities(citiesOfCountry.map((city) => city.name));
+  const fetchCountryData = async () => {
+    try {
+      const response = await axios.get("/api/country/getCountry");
+      console.log(response.data.data)
+      const countryList = response.data.data.map((country) => ({
+        isoCode: country.isoCode,
+        name: `${country.name}`,
+      }));
+      setCountryData(countryList);
+    } catch (error) {
+      setError("Failed to fetch countries");
+      console.error("Failed to fetch countries:", error.response ? error.response.data : error.message);
+    } finally {
+      setLoading(false);
     }
-  }, []); // Run only once on component mount
+  };
+
+  const fetchCities = async (countryName) => {
+    if (countryName) {
+      try {
+        const response = await axios.get(`/api/city/getCityByCountry?countryName=${countryName}`);
+        console.log(response)
+        const cityData = response.data;
+        setCities(cityData.map((city) => ({ name: city.name })));
+      } catch (error) {
+        console.error("Failed to fetch cities:", error.response ? error.response.data : error.message);
+      }
+    } else {
+      setCities([]);
+    }
+  };
 
   useEffect(() => {
-    // Reset city selection when country changes
+    fetchCountryData();
+  }, []);
+
+  useEffect(() => {
     setCity(null);
-
-    // Fetch cities based on selected country
-    const fetchCities = async () => {
-      if (country) {
-        const citiesOfCountry = City.getCitiesOfCountry(country.isoCode);
-        setCities(citiesOfCountry.map((city) => city.name));
-      } else {
-        setCities([]);
-      }
-    };
-
-    fetchCities();
+    if (country) {
+      fetchCities(country.name);
+    } else {
+      setCities([]);
+    }
   }, [country]);
 
-  const handleCityInputChange = (event, value) => {
-    setCity(value);
+  const handleCityInputChange = (event, newValue) => {
+    setCity(newValue);
   };
 
   const handleSubmit = async (e) => {
@@ -52,12 +69,12 @@ const CreateChapter = () => {
     const chapterData = {
       name,
       countryName: country?.name,
-      city,
+      city: city?.name,
     };
 
     try {
       const response = await axios.post(
-        "http://localhost:3002/chapter/addChapter",
+        "/api/chapter/addChapter",
         chapterData,
         { withCredentials: true },
         {
@@ -80,19 +97,6 @@ const CreateChapter = () => {
     }
   };
 
-  // Fetch all countries with their short codes
-  const countryData = Country.getAllCountries().map((country) => ({
-    isoCode: country.isoCode,
-    name: `${country.name} (${country.isoCode})`,
-  }));
-
-  // Filter cities based on input in the city text field alphabetically
-  const filteredCities = cities
-    .filter((cityName) =>
-      cityName.toLowerCase().includes(city ? city.toLowerCase() : "")
-    )
-    .sort((a, b) => a.localeCompare(b)); // Sort cities alphabetically
-
   return (
     <>
       <div className="w-full p-2">
@@ -107,64 +111,78 @@ const CreateChapter = () => {
             {" "}
             Chapters /
           </Link>
-          <span className="font-semibold text-red-500"> InsertChapter</span>
+          <span className="font-semibold text-red-500"> Insert Chapter</span>
         </nav>
       </div>
       <div className="p-4">
         <h1 className="text-xl font-bold mb-4">Create Chapter</h1>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">
-              Country
-            </label>
-            <Autocomplete
-              options={countryData}
-              getOptionLabel={(option) => option.name}
-              value={country}
-              onChange={(event, newValue) => setCountry(newValue)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Select Country"
-                  className="w-1/2"
-                  required
-                />
-              )}
-            />
-          </div>
-          {
-            <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">City</label>
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4 w-1/2">
+              <label className="block text-gray-700 font-bold mb-2">
+                Country
+              </label>
               <Autocomplete
-                options={filteredCities}
-                value={city}
-                onChange={handleCityInputChange}
+                options={countryData}
+                getOptionLabel={(option) => option.name}
+                value={country}
+                onChange={(event, newValue) => setCountry(newValue)}
+                filterOptions={(options, state) => 
+                  options.filter((option) => 
+                    option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                  )
+                }
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Select City"
+                    label="Select Country"
                     className="w-1/2"
                     required
                   />
                 )}
               />
             </div>
-          }
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">
-              Chapter name
-            </label>
-            <TextField
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-1/2"
-              required
-            />
-          </div>
-          <Button type="submit" variant="contained" color="primary">
-            Save
-          </Button>
-        </form>
+            <div className="mb-4 w-1/2">
+              <label className="block text-gray-700 font-bold mb-2">City</label>
+              <Autocomplete
+                options={cities}
+                getOptionLabel={(option) => option.name}
+                value={city}
+                onChange={handleCityInputChange}
+                filterOptions={(options, state) => 
+                  options.filter((option) => 
+                    option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                  )
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select City"
+                    className="w-1/2"
+                    required
+                    disabled={!country}
+                  />
+                )}
+              />
+            </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-bold mb-2">Chapter Name</label>
+              <TextField
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-1/2"
+                required
+              />
+            </div>
+            <Button type="submit" variant="contained" color="primary">
+              Create Chapter
+            </Button>
+          </form>
+        )}
       </div>
     </>
   );

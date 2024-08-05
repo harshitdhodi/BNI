@@ -26,9 +26,7 @@ const MyAskList = () => {
   const fetchMyGives = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/myGives/getMyGives?userId=${userId}&page=${
-          pageIndex + 1
-        }`,
+        `/api/myGives/getMyGives?userId=${userId}&page=${pageIndex + 1}`,
         { withCredentials: true }
       );
 
@@ -57,9 +55,7 @@ const MyAskList = () => {
   const fetchMyAsks = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/myAsk/getMyAsk?userId=${userId}&page=${
-          pageIndex + 1
-        }`,
+        `/api/myAsk/getMyAsk?userId=${userId}&page=${pageIndex + 1}`,
         { withCredentials: true }
       );
       console.log("My Asks Response:", response.data);
@@ -98,9 +94,9 @@ const MyAskList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/myAsk/deleteMyAskById?id=${id}`, { withCredentials: true }
-      );
+      await axios.delete(`/api/myAsk/deleteMyAskById?id=${id}`, {
+        withCredentials: true,
+      });
       fetchMyAsks();
     } catch (error) {
       console.error("Error deleting My Ask:", error);
@@ -154,12 +150,15 @@ const MyAskList = () => {
               <td className="py-2 px-6">{myAsk.id}</td>
               <td className="py-2 px-6">{myAsk.companyName}</td>
               <td className="py-2 px-6">{myAsk.dept}</td>
-              <td className="py-2 px-6 "> <div className="truncate overflow-hidden max-w-xs ">
+              <td className="py-2 px-6 ">
+                {" "}
+                <div className="truncate overflow-hidden max-w-xs ">
                   {myAsk.message}
-                </div></td>
+                </div>
+              </td>
               <td className="py-2 px-4">
                 <div className="flex py-1 px-4 items-center space-x-2">
-                <button onClick={() => openModal(myAsk)}>
+                  <button onClick={() => openModal(myAsk)}>
                     <IoEyeSharp className="text-green-500 text-lg" />
                   </button>
                   <button>
@@ -170,9 +169,10 @@ const MyAskList = () => {
                   <button onClick={() => handleDelete(myAsk._id)}>
                     <FaTrashAlt className="text-red-500 text-lg" />
                   </button>
-                
                 </div>
-                <Link to={`/myMatch/${myAsk.companyName}/${myAsk.dept}/${userId}`}>
+                <Link
+                  to={`/myMatch/${myAsk.companyName}/${myAsk.dept}/${userId}`}
+                >
                   <button className="bg-red-600 flex justify-center gap-2 items-center text-white px-2 py-1 rounded hover:bg-red-700 transition">
                     <FaQuestionCircle className="text-lg" />
                     <p> My Matches</p>

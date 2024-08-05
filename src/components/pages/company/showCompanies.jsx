@@ -23,10 +23,10 @@ const CompanyList = () => {
   const fetchCompanies = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/company/getAllCompany?page=${pageIndex + 1}`,
+        `/api/company/getAllCompany?page=${pageIndex + 1}`,
         { withCredentials: true, timeout: 5000 }
       );
-      console.log( response.data.data)
+      console.log(response.data.data);
       if (response.data && response.data.data) {
         const dataWithIds = response.data.data.map((company, index) => ({
           ...company,
@@ -44,10 +44,10 @@ const CompanyList = () => {
 
   const fetchCompanyNames = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3002/company/getNonExistingCompanyNames",
-        { withCredentials: true, timeout: 5000 }
-      );
+      const response = await axios.get("/api/company/getNonExistingCompanyNames", {
+        withCredentials: true,
+        timeout: 5000,
+      });
 
       if (response.data && response.data.companyNames) {
         setCompanyNames(response.data.companyNames);
@@ -60,17 +60,13 @@ const CompanyList = () => {
     }
   };
 
-
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this company?")) {
       try {
-        const response = await axios.delete(
-          "http://localhost:3002/company/deleteCompany",
-          {
-            params: { id },
-            withCredentials: true,
-          }
-        );
+        const response = await axios.delete("/api/company/deleteCompany", {
+          params: { id },
+          withCredentials: true,
+        });
         if (response.status === 200) {
           fetchCompanies();
         } else {
@@ -120,7 +116,7 @@ const CompanyList = () => {
                   <strong>Profile Image:</strong>
                 </p>
                 <img
-                  src={`http://localhost:3002/image/download/${company.profileImg}`}
+                  src={`/api/image/download/${company.profileImg}`}
                   alt="Profile"
                   className="w-full max-h-60 object-cover mb-2"
                 />
@@ -130,7 +126,7 @@ const CompanyList = () => {
                   <strong>Banner Image:</strong>
                 </p>
                 <img
-                  src={`http://localhost:3002/image/download/${company.bannerImg}`}
+                  src={`/api/image/download/${company.bannerImg}`}
                   alt="Banner"
                   className="w-full max-h-60 object-cover mb-2"
                 />
@@ -198,30 +194,30 @@ const CompanyList = () => {
     const itemsPerPage = 9; // 3 columns * 3 rows
     const totalPages = Math.ceil(companies.length / itemsPerPage);
     const navigate = useNavigate();
-  
+
     if (!companies) return null;
-  
+
     const startIndex = currentPage * itemsPerPage;
     const endIndex = Math.min(startIndex + itemsPerPage, companies.length);
     const paginatedCompanies = companies.slice(startIndex, endIndex);
-  
+
     const handleNextPage = () => {
       if (currentPage < totalPages - 1) {
         setCurrentPage(currentPage + 1);
       }
     };
-  
+
     const handlePreviousPage = () => {
       if (currentPage > 0) {
         setCurrentPage(currentPage - 1);
       }
     };
-  
+
     const handleCompanyClick = (companyName) => {
       // Redirect to the company form page using React Router
       navigate(`/add_company?name=${encodeURIComponent(companyName)}`);
     };
-  
+
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 p-4">
         <div className="bg-white p-6 rounded shadow-lg max-w-full mx-auto overflow-y-auto">
@@ -266,10 +262,13 @@ const CompanyList = () => {
       </div>
     );
   };
-  
 
   return (
-    <div className={`p-4 overflow-x-auto ${showCompanyModal || showFindCompanyModal ? "modal-open" : ""}`}>
+    <div
+      className={`p-4 overflow-x-auto ${
+        showCompanyModal || showFindCompanyModal ? "modal-open" : ""
+      }`}
+    >
       {/* <nav className="mb-4">
         <Link to="/" className="mr-2 text-red-300 hover:text-red-500">
           Dashboard /
@@ -297,97 +296,98 @@ const CompanyList = () => {
 
       {companies.length > 0 && (
         <>
-         <div  className="w-full overflow-x-auto lg:overflow-x-scroll mt-4 shadow-lg" >
-         <table className="min-w-full border-collapse">
-            <thead  >
-              <tr className="bg-[#CF2030] text-white text-left font-serif text-[14px]">
-                <th className="py-2 px-4 lg:px-6">Profile Image</th>
-                <th className="py-2 px-4 lg:px-6">Banner Image</th>
-                <th className="py-2 px-4 lg:px-6">Company Name</th>
-                <th className="py-2 px-4 lg:px-6">Contact Links</th>
-                <th className="py-2 px-4 lg:px-6">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {companies.map((company) => (
-                <tr key={company._id}
-                 className="bg-gray-50 border-b border-gray-300 hover:bg-gray-100 transition duration-150"
-                >
-                  <td className="py-2 px-6">
-                    <img
-                      src={`http://localhost:3002/image/download/${company.profileImg}`}
-                      alt="Profile"
-                      className="w-16 h-16 object-cover"
-                    />
-                  </td>
-                  <td className="py-2 px-6">
-                    <img
-                      src={`http://localhost:3002/image/download/${company.bannerImg}`}
-                      alt="Banner"
-                      className="w-16 h-16 object-cover"
-                    />
-                  </td>
-                  <td className="py-2 px-6">{company.companyName}</td>
-                  <td className="py-2 px-6 mt-5 flex gap-2 items-center ">
-                    <a
-                      href={company.whatsapp || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mr-2"
-                    >
-                      <IoLogoWhatsapp className="w-[20px] h-[20px] text-green-500" />
-                    </a>
-                    <a
-                      href={company.facebook || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mr-2"
-                    >
-                      <FaFacebook className="w-[20px] h-[20px] text-purple-900" />
-                    </a>
-                    <a
-                      href={company.twitter || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mr-2"
-                    >
-                      <FaTwitterSquare className="w-[20px] h-[20px] text-blue-500" />
-                    </a>
-                    <a
-                      href={company.linkedin || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mr-2"
-                    >
-                      <FaLinkedin className="w-[20px] h-[20px] text-blue-500" />
-                    </a>
-                  </td>
-                  <td className="py-2 px-6">
-                    <button
-                      onClick={() => handleViewDetails(company)}
-                      className="text-blue-500 hover:text-blue-700 mr-2"
-                    >
-                      View
-                    </button>
-                    <button>
+          <div className="w-full overflow-x-auto lg:overflow-x-scroll mt-4 shadow-lg">
+            <table className="min-w-full border-collapse">
+              <thead>
+                <tr className="bg-[#CF2030] text-white text-left font-serif text-[14px]">
+                  <th className="py-2 px-4 lg:px-6">Profile Image</th>
+                  <th className="py-2 px-4 lg:px-6">Banner Image</th>
+                  <th className="py-2 px-4 lg:px-6">Company Name</th>
+                  <th className="py-2 px-4 lg:px-6">Contact Links</th>
+                  <th className="py-2 px-4 lg:px-6">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {companies.map((company) => (
+                  <tr
+                    key={company._id}
+                    className="bg-gray-50 border-b border-gray-300 hover:bg-gray-100 transition duration-150"
+                  >
+                    <td className="py-2 px-6">
+                      <img
+                        src={`/api/image/download/${company.profileImg}`}
+                        alt="Profile"
+                        className="w-16 h-16 object-cover"
+                      />
+                    </td>
+                    <td className="py-2 px-6">
+                      <img
+                        src={`/api/image/download/${company.bannerImg}`}
+                        alt="Banner"
+                        className="w-16 h-16 object-cover"
+                      />
+                    </td>
+                    <td className="py-2 px-6">{company.companyName}</td>
+                    <td className="py-2 px-6 mt-5 flex gap-2 items-center ">
+                      <a
+                        href={company.whatsapp || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mr-2"
+                      >
+                        <IoLogoWhatsapp className="w-[20px] h-[20px] text-green-500" />
+                      </a>
+                      <a
+                        href={company.facebook || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mr-2"
+                      >
+                        <FaFacebook className="w-[20px] h-[20px] text-purple-900" />
+                      </a>
+                      <a
+                        href={company.twitter || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mr-2"
+                      >
+                        <FaTwitterSquare className="w-[20px] h-[20px] text-blue-500" />
+                      </a>
+                      <a
+                        href={company.linkedin || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mr-2"
+                      >
+                        <FaLinkedin className="w-[20px] h-[20px] text-blue-500" />
+                      </a>
+                    </td>
+                    <td className="py-2 px-6">
+                      <button
+                        onClick={() => handleViewDetails(company)}
+                        className="text-blue-500 hover:text-blue-700 mr-2"
+                      >
+                        View
+                      </button>
+                      <button>
                         <Link to={`/edit_company/${company._id}`}>
                           <FaEdit className="text-blue-500 text-lg" />
                         </Link>
                       </button>
-                    <button
-                      onClick={() => handleDelete(company._id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <FaTrashAlt />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-         </div>
+                      <button
+                        onClick={() => handleDelete(company._id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <FaTrashAlt />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-         <div className="mt-4 flex justify-center items-center space-x-2">
+          <div className="mt-4 flex justify-center items-center space-x-2">
             <button
               onClick={handlePreviousPage}
               disabled={pageIndex === 0}
@@ -417,7 +417,10 @@ const CompanyList = () => {
       )}
 
       {showFindCompanyModal && (
-        <FindCompanyModal companies={companyNames} onClose={closeFindCompanyModal} />
+        <FindCompanyModal
+          companies={companyNames}
+          onClose={closeFindCompanyModal}
+        />
       )}
     </div>
   );

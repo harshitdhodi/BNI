@@ -23,10 +23,9 @@ const EditMyAsk = () => {
 
   const fetchMyAsk = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/myAsk/getMyAskById?id=${id}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/myAsk/getMyAskById?id=${id}`, {
+        withCredentials: true,
+      });
       console.log("API response:", response);
 
       const myAskData = response.data.data;
@@ -45,10 +44,13 @@ const EditMyAsk = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/department/getAllDepartment");
+      const response = await axios.get("/api/department/getAllDepartment");
       setDepartments(response.data.data);
     } catch (error) {
-      console.error("Failed to fetch departments:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch departments:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -62,20 +64,18 @@ const EditMyAsk = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      await axios.put(
-        `http://localhost:3002/myAsk/updateMyAsk?id=${id}`,
-        myAsk,
-        { withCredentials: true }
-      );
-    
+      await axios.put(`/api/myAsk/updateMyAsk?id=${id}`, myAsk, {
+        withCredentials: true,
+      });
+
       const regex = new RegExp(`http://localhost:5173/editMyAsks/${id}`);
       if (regex.test(window.location.pathname)) {
         navigate(`/allAsks`);
       } else {
         navigate(`/myAsks/${userId}`);
-      } 
+      }
     } catch (error) {
       console.error(
         "Failed to update My Ask:",
@@ -86,11 +86,17 @@ const EditMyAsk = () => {
 
   const fetchCompanyOptions = async (searchTerm) => {
     try {
-      const response = await axios.get(`http://localhost:3002/company/getFilteredGives?companyName=${searchTerm}`, {withCredentials:true});
-      console.log(response.data.companies)
+      const response = await axios.get(
+        `/api/company/getFilteredGives?companyName=${searchTerm}`,
+        { withCredentials: true }
+      );
+      console.log(response.data.companies);
       setCompanyOptions(response.data.companies || []);
     } catch (error) {
-      console.error("Failed to fetch company options:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch company options:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -101,7 +107,10 @@ const EditMyAsk = () => {
           <Link to="/" className="mr-2 text-red-300 hover:text-red-500">
             Dashboard /
           </Link>
-          <Link to={`/myAsks/${userId}`} className="mr-2 text-red-300 hover:text-red-500">
+          <Link
+            to={`/myAsks/${userId}`}
+            className="mr-2 text-red-300 hover:text-red-500"
+          >
             My Asks /
           </Link>
           <Link className="font-semibold text-red-500"> Edit My Ask</Link>
@@ -123,7 +132,12 @@ const EditMyAsk = () => {
               }}
               onChange={(event, newValue) => {
                 setSelectedCompany(newValue);
-                handleChange({ target: { name: "companyName", value: newValue ? newValue.companyName : "" } });
+                handleChange({
+                  target: {
+                    name: "companyName",
+                    value: newValue ? newValue.companyName : "",
+                  },
+                });
               }}
               renderInput={(params) => (
                 <TextField
@@ -179,7 +193,7 @@ const EditMyAsk = () => {
         </form>
       </div>
     </>
-  ); 
+  );
 };
 
 export default EditMyAsk;

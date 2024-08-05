@@ -16,7 +16,7 @@ const DepartmentList = () => {
   const fetchDepartments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/department/getDepartment?page=${pageIndex + 1}`
+        `/api/department/getDepartment?page=${pageIndex + 1}`
       );
       const dataWithIds = response.data.data.map((department, index) => ({
         ...department,
@@ -43,9 +43,7 @@ const DepartmentList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/department/deleteDepartmentById?id=${id}`
-      );
+      await axios.delete(`/api/department/deleteDepartmentById?id=${id}`);
       fetchDepartments();
     } catch (error) {
       console.error("There was an error deleting the department!", error);

@@ -19,8 +19,8 @@ const AllGives = () => {
     try {
       setIsSearching(!!searchValue);
       const url = searchValue
-        ? `http://localhost:3002/myGives/getFilteredGives?companyName=${searchValue}`
-        : `http://localhost:3002/myGives/getMyAllGives?page=${page}`;
+        ? `/api/myGives/getFilteredGives?companyName=${searchValue}`
+        : `/api/myGives/getMyAllGives?page=${page}`;
       const response = await axios.get(url, { withCredentials: true });
 
       console.log("API Response:", response.data);
@@ -67,7 +67,7 @@ const AllGives = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:3002/myGives/deletemyGivesById?id=${id}`, {
+      await axios.delete(`/api/myGives/deletemyGivesById?id=${id}`, {
         withCredentials: true,
       });
       fetchCompanies(value, currentPage);

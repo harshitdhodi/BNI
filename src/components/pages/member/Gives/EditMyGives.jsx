@@ -24,10 +24,9 @@ const EditMyGives = () => {
 
   const fetchMyGive = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/myGives/getmyGivesById?id=${id}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`/api/myGives/getmyGivesById?id=${id}`, {
+        withCredentials: true,
+      });
       const myGiveData = response.data.data;
 
       if (myGiveData) {
@@ -44,10 +43,13 @@ const EditMyGives = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/department/getAllDepartment");
+      const response = await axios.get("/api/department/getAllDepartment");
       setDepartments(response.data.data);
     } catch (error) {
-      console.error("Failed to fetch departments:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch departments:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -63,11 +65,9 @@ const EditMyGives = () => {
     e.preventDefault();
 
     try {
-      await axios.put(
-        `http://localhost:3002/myGives/updateMyGives?id=${id}`,
-        myGive,
-        { withCredentials: true }
-      );
+      await axios.put(`/api/myGives/updateMyGives?id=${id}`, myGive, {
+        withCredentials: true,
+      });
       navigate(`/myGives/${userId}`);
     } catch (error) {
       console.error(
@@ -79,10 +79,16 @@ const EditMyGives = () => {
 
   const fetchCompanyOptions = async (searchTerm) => {
     try {
-      const response = await axios.get(`http://localhost:3002/company/getFilteredGives?companyName=${searchTerm}`, {withCredentials:true});
+      const response = await axios.get(
+        `/api/company/getFilteredGives?companyName=${searchTerm}`,
+        { withCredentials: true }
+      );
       setCompanyOptions(response.data.companies || []);
     } catch (error) {
-      console.error("Failed to fetch company options:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch company options:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -93,7 +99,10 @@ const EditMyGives = () => {
           <Link to="/" className="mr-2 text-red-300 hover:text-red-500">
             Dashboard /
           </Link>
-          <Link to={`/myGives/${userId}`} className="mr-2 text-red-300 hover:text-red-500">
+          <Link
+            to={`/myGives/${userId}`}
+            className="mr-2 text-red-300 hover:text-red-500"
+          >
             My Gives /
           </Link>
           <Link className="font-semibold text-red-500"> Edit My Gives</Link>
@@ -102,68 +111,90 @@ const EditMyGives = () => {
       <div className="p-4">
         <h1 className="text-xl font-bold mb-4">Edit My Gives</h1>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
-          {Object.keys(myGive).map((key) =>
-            key !== "_id" &&
-            key !== "createdAt" &&
-            key !== "updatedAt" &&
-            key !== "user" &&
-            key !== "__v" && (
-              <div key={key}>
-                <label htmlFor={key} className="block text-gray-700 font-bold mb-2">
-                  {key.charAt(0).toUpperCase() + key.slice(1).replace("_", " ")}
-                </label>
-                {key === "dept" ? (
-                  <Autocomplete
-                    options={departments}
-                    getOptionLabel={(option) => option.name}
-                    value={departments.find((dept) => dept.name === myGive[key]) || null}
-                    onChange={(event, newValue) => {
-                      handleChange({ target: { name: "dept", value: newValue ? newValue.name : "" } });
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Select Department"
-                        variant="outlined"
-                        className="w-full"
-                        required
-                      />
-                    )}
-                  />
-                ) : key === "companyName" ? (
-                  <Autocomplete
-                    options={companyOptions}
-                    getOptionLabel={(option) => option.companyName}
-                    value={companyOptions.find((option) => option.companyName === myGive[key]) || null}
-                    onInputChange={(event, newInputValue) => {
-                      fetchCompanyOptions(newInputValue);
-                    }}
-                    onChange={(event, newValue) => {
-                      handleChange({ target: { name: "companyName", value: newValue ? newValue.companyName : "" } });
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Select Company"
-                        variant="outlined"
-                        className="w-full"
-                        required
-                      />
-                    )}
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    id={key}
-                    name={key}
-                    value={myGive[key]}
-                    onChange={handleChange}
-                    className="w-full p-4 border bg-[#F1F1F1] border-[#aeabab] rounded focus:outline-none focus:border-red-500 transition duration-300"
-                    required
-                  />
-                )}
-              </div>
-            )
+          {Object.keys(myGive).map(
+            (key) =>
+              key !== "_id" &&
+              key !== "createdAt" &&
+              key !== "updatedAt" &&
+              key !== "user" &&
+              key !== "__v" && (
+                <div key={key}>
+                  <label
+                    htmlFor={key}
+                    className="block text-gray-700 font-bold mb-2"
+                  >
+                    {key.charAt(0).toUpperCase() +
+                      key.slice(1).replace("_", " ")}
+                  </label>
+                  {key === "dept" ? (
+                    <Autocomplete
+                      options={departments}
+                      getOptionLabel={(option) => option.name}
+                      value={
+                        departments.find((dept) => dept.name === myGive[key]) ||
+                        null
+                      }
+                      onChange={(event, newValue) => {
+                        handleChange({
+                          target: {
+                            name: "dept",
+                            value: newValue ? newValue.name : "",
+                          },
+                        });
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Select Department"
+                          variant="outlined"
+                          className="w-full"
+                          required
+                        />
+                      )}
+                    />
+                  ) : key === "companyName" ? (
+                    <Autocomplete
+                      options={companyOptions}
+                      getOptionLabel={(option) => option.companyName}
+                      value={
+                        companyOptions.find(
+                          (option) => option.companyName === myGive[key]
+                        ) || null
+                      }
+                      onInputChange={(event, newInputValue) => {
+                        fetchCompanyOptions(newInputValue);
+                      }}
+                      onChange={(event, newValue) => {
+                        handleChange({
+                          target: {
+                            name: "companyName",
+                            value: newValue ? newValue.companyName : "",
+                          },
+                        });
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Select Company"
+                          variant="outlined"
+                          className="w-full"
+                          required
+                        />
+                      )}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      id={key}
+                      name={key}
+                      value={myGive[key]}
+                      onChange={handleChange}
+                      className="w-full p-4 border bg-[#F1F1F1] border-[#aeabab] rounded focus:outline-none focus:border-red-500 transition duration-300"
+                      required
+                    />
+                  )}
+                </div>
+              )
           )}
           <div className="col-span-2">
             <button

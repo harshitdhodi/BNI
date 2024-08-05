@@ -19,9 +19,7 @@ const MyGivesList = () => {
   const fetchMyGives = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/myGives/getMyGives?userId=${userId}&page=${
-          pageIndex + 1
-        }`,
+        `/api/myGives/getMyGives?userId=${userId}&page=${pageIndex + 1}`,
         { withCredentials: true }
       );
 
@@ -68,10 +66,9 @@ const MyGivesList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/myGives/deletemyGivesById?id=${id}`,
-        { withCredentials: true }
-      );
+      await axios.delete(`/api/myGives/deletemyGivesById?id=${id}`, {
+        withCredentials: true,
+      });
       fetchMyGives(); // Fetch data again after deletion
     } catch (error) {
       console.error("Error deleting My Gives:", error);

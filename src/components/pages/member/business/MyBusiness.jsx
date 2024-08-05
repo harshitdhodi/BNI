@@ -21,12 +21,10 @@ const MyBusinessList = () => {
   const fetchBusinesses = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/business/getbusinessByuserId?userId=${userId}&page=${
-          pageIndex + 1
-        }`,
+        `/api/business/getbusinessByuserId?userId=${userId}&page=${pageIndex + 1}`,
         { withCredentials: true, timeout: 5000 }
       );
-console.log(response.data.data)
+      console.log(response.data.data);
       if (response.data && response.data.data) {
         const dataWithIds = response.data.data.map((business, index) => ({
           ...business,
@@ -46,13 +44,10 @@ console.log(response.data.data)
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this business?")) {
       try {
-        const response = await axios.delete(
-          "http://localhost:3002/business/deletebusiness",
-          {
-            params: { id },
-            withCredentials: true,
-          }
-        );
+        const response = await axios.delete("/api/business/deletebusiness", {
+          params: { id },
+          withCredentials: true,
+        });
         if (response.status === 200) {
           // Update the business list after deletion
           fetchBusinesses();
@@ -104,7 +99,7 @@ console.log(response.data.data)
                   <strong>Profile Image:</strong>
                 </p>
                 <img
-                  src={`http://localhost:3002/image/download/${business.profileImg}`}
+                  src={`/api/image/download/${business.profileImg}`}
                   alt="Profile"
                   className="w-1/2 max-h-60 object-cover mb-2"
                 />
@@ -114,16 +109,19 @@ console.log(response.data.data)
                   <strong>Banner Image:</strong>
                 </p>
                 <img
-                  src={`http://localhost:3002/image/download/${business.bannerImg}`}
+                  src={`/api/image/download/${business.bannerImg}`}
                   alt="Banner"
                   className="w-1/2 max-h-60 object-cover mb-2"
                 />
               </div>
-            
             </div>
             <p>
-            <p><strong>Name:</strong> {business.user.name}</p>
-            <p><strong>Email:</strong> {business.user.email}</p>
+              <p>
+                <strong>Name:</strong> {business.user.name}
+              </p>
+              <p>
+                <strong>Email:</strong> {business.user.email}
+              </p>
               <strong>Designation:</strong> {business.designation}
             </p>
             <p>
@@ -142,15 +140,59 @@ console.log(response.data.data)
               <strong>Contact Links:</strong>
             </p>
             <ul className="mb-2 flex">
-              {business.whatsapp && <li><strong></strong> <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a></li>}
-              {business.facebook && <li><strong></strong> <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a></li>}
-              {business.twitter && <li><strong></strong> <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a></li>}
-              {business.linkedin && <li><strong></strong> <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a></li>}
+              {business.whatsapp && (
+                <li>
+                  <strong></strong>{" "}
+                  <a
+                    href={business.whatsapp}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" />
+                  </a>
+                </li>
+              )}
+              {business.facebook && (
+                <li>
+                  <strong></strong>{" "}
+                  <a
+                    href={business.facebook}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaFacebook className="w-[25px] h-[25px] text-blue-800" />
+                  </a>
+                </li>
+              )}
+              {business.twitter && (
+                <li>
+                  <strong></strong>{" "}
+                  <a
+                    href={business.twitter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" />
+                  </a>
+                </li>
+              )}
+              {business.linkedin && (
+                <li>
+                  <strong></strong>{" "}
+                  <a
+                    href={business.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FaLinkedin className="w-[25px] h-[25px] text-blue-700" />
+                  </a>
+                </li>
+              )}
             </ul>
             {/* <p><strong>Catalog:</strong></p>
             {business.catalog ? (
               <a
-                href={`http://localhost:3002/pdf/download/${business.catalog}`}
+                href={`/pdf/download/${business.catalog}`}
                 download={business.catalog} // Specify the filename for download attribute
                 className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition duration-300 inline-block"
               >
@@ -159,7 +201,6 @@ console.log(response.data.data)
             ) : (
               <p className="text-red-500">No catalog available</p>
             )} */}
-           
           </div>
           <button
             onClick={onClose}
@@ -204,7 +245,7 @@ console.log(response.data.data)
                 <th className="py-2 px-6">Owner</th>
                 <th className="py-2 px-6">Company Name</th>
                 <th className="py-2 px-6">Profile Image</th>
-             
+
                 <th className="py-2 px-6">Industry Name</th>
                 <th className="py-2 px-6">Contact Links</th>
                 <th className="py-2 px-6">Catalog</th>
@@ -218,15 +259,11 @@ console.log(response.data.data)
                   className="bg-gray-50 border-b border-gray-300 hover:bg-gray-100 transition duration-150"
                 >
                   <td className="py-2 px-6">{business.id}</td>
-                  <td className="py-2 px-6">
-               {business.user?.name}
-               </td>
-               <td className="py-2 px-6">
-              {business.companyName}
-               </td>
+                  <td className="py-2 px-6">{business.user?.name}</td>
+                  <td className="py-2 px-6">{business.companyName}</td>
                   <td className="py-2 px-6">
                     <img
-                      src={`http://localhost:3002/image/download/${business.profileImg}`}
+                      src={`/api/image/download/${business.profileImg}`}
                       alt="Profile"
                       width="50"
                       height="50"
@@ -235,7 +272,7 @@ console.log(response.data.data)
                   </td>
                   {/* <td className="py-2 px-6">
                     <img
-                      src={`http://localhost:3002/image/download/${business.bannerImg}`}
+                      src={`/image/download/${business.bannerImg}`}
                       alt="Banner"
                       width="50"
                       height="50"
@@ -244,17 +281,46 @@ console.log(response.data.data)
                   </td> */}
                   <td className="py-2 px-6">{business.industryName}</td>
                   <td className="py-2 px-6 flex gap-2">
-                {business.whatsapp && <a href={business.whatsapp} target="_blank" rel="noopener noreferrer"><IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" /></a>}
-                {business.facebook && <a href={business.facebook} target="_blank" rel="noopener noreferrer"><FaFacebook className="w-[25px] h-[25px] text-blue-800" /></a>}
-                {business.twitter && <a href={business.twitter} target="_blank" rel="noopener noreferrer"><FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" /></a>}
-                {business.linkedin && <a href={business.linkedin} target="_blank" rel="noopener noreferrer"><FaLinkedin className="w-[25px] h-[25px] text-blue-700" /></a>}
-              </td>
+                    {business.whatsapp && (
+                      <a
+                        href={business.whatsapp}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <IoLogoWhatsapp className="w-[25px] h-[25px] text-green-500" />
+                      </a>
+                    )}
+                    {business.facebook && (
+                      <a
+                        href={business.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaFacebook className="w-[25px] h-[25px] text-blue-800" />
+                      </a>
+                    )}
+                    {business.twitter && (
+                      <a
+                        href={business.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaTwitterSquare className="w-[25px] h-[25px] text-blue-500" />
+                      </a>
+                    )}
+                    {business.linkedin && (
+                      <a
+                        href={business.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <FaLinkedin className="w-[25px] h-[25px] text-blue-700" />
+                      </a>
+                    )}
+                  </td>
                   <td className="py-2 px-6">
                     {business.catalog ? (
-                      <a
-                        href={`http://localhost:3002/pdf/download/${business.catalog}`}
-                        download
-                      >
+                      <a href={`/api/pdf/download/${business.catalog}`} download>
                         <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition">
                           Download
                         </button>
@@ -272,7 +338,7 @@ console.log(response.data.data)
                   <td className="py-2 px-4">
                     <div className="flex py-1 px-4 -ml-2 space-x-2">
                       <button>
-                        <Link to={`/editMyBusiness/${userId}/${business._id}`}>
+                        <Link to={`/api/editMyBusiness/${userId}/${business._id}`}>
                           <FaEdit className="text-blue-500 text-lg" />
                         </Link>
                       </button>

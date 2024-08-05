@@ -5,14 +5,14 @@ import axios from "axios";
 const EditCompany = () => {
   const { id, userId } = useParams();
   const [company, setCompany] = useState({
-    bannerImg: '',
-    profileImg: '',
-    companyName: '',
-    whatsapp: '',
-    facebook: '',
-    linkedin: '',
-    twitter: '',
-    companyAddress: '',
+    bannerImg: "",
+    profileImg: "",
+    companyName: "",
+    whatsapp: "",
+    facebook: "",
+    linkedin: "",
+    twitter: "",
+    companyAddress: "",
   });
   const navigate = useNavigate();
 
@@ -22,22 +22,22 @@ const EditCompany = () => {
 
   const fetchCompany = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/company/getCompanyById?id=${id}`,
-        { withCredentials: true, timeout: 10000 }
-      );
+      const response = await axios.get(`/api/company/getCompanyById?id=${id}`, {
+        withCredentials: true,
+        timeout: 10000,
+      });
       const companyData = response.data.data;
 
       if (companyData) {
         setCompany({
-          bannerImg: companyData.bannerImg || '',
-          profileImg: companyData.profileImg || '',
-          companyName: companyData.companyName || '',
-          whatsapp: companyData.whatsapp || '',
-          facebook: companyData.facebook || '',
-          linkedin: companyData.linkedin || '',
-          twitter: companyData.twitter || '',
-          companyAddress: companyData.companyAddress || '',
+          bannerImg: companyData.bannerImg || "",
+          profileImg: companyData.profileImg || "",
+          companyName: companyData.companyName || "",
+          whatsapp: companyData.whatsapp || "",
+          facebook: companyData.facebook || "",
+          linkedin: companyData.linkedin || "",
+          twitter: companyData.twitter || "",
+          companyAddress: companyData.companyAddress || "",
         });
       } else {
         console.error("No Company data found");
@@ -66,7 +66,7 @@ const EditCompany = () => {
   const handleResetFile = (fieldName) => {
     setCompany((prevCompany) => ({
       ...prevCompany,
-      [fieldName]: '',
+      [fieldName]: "",
     }));
   };
 
@@ -77,7 +77,7 @@ const EditCompany = () => {
 
     // Append fields to FormData
     Object.keys(company).forEach((key) => {
-      if (key === 'bannerImg' || key === 'profileImg') {
+      if (key === "bannerImg" || key === "profileImg") {
         if (company[key]) {
           formData.append(key, company[key]);
         }
@@ -88,9 +88,12 @@ const EditCompany = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3002/company/updateCompanyById?id=${id}`,
+        `/api/company/updateCompanyById?id=${id}`,
         formData,
-        { withCredentials: true, headers: { "Content-Type": "multipart/form-data" } }
+        {
+          withCredentials: true,
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
       if (response.status === 200) {
@@ -122,7 +125,10 @@ const EditCompany = () => {
       </div>
       <div className="p-4">
         <h1 className="text-xl font-bold mb-4">Edit Company</h1>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
           <div className="mb-4">
             <label htmlFor="bannerImg" className="block font-semibold mb-2">
               Banner Image
@@ -136,7 +142,7 @@ const EditCompany = () => {
             />
             {company.bannerImg && (
               <img
-                src={`http://localhost:3002/image/download/${company.bannerImg}`}
+                src={`/api/image/download/${company.bannerImg}`}
                 alt="Banner"
                 width="100"
                 height="100"
@@ -167,7 +173,7 @@ const EditCompany = () => {
             />
             {company.profileImg && (
               <img
-                src={`http://localhost:3002/image/download/${company.profileImg}`}
+                src={`/api/image/download/${company.profileImg}`}
                 alt="Profile"
                 width="100"
                 height="100"
@@ -257,7 +263,10 @@ const EditCompany = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="companyAddress" className="block font-semibold mb-2">
+            <label
+              htmlFor="companyAddress"
+              className="block font-semibold mb-2"
+            >
               Company Address
             </label>
             <input

@@ -20,8 +20,8 @@ const AllAsks = () => {
   const fetchAsks = async (searchValue = "", page = 1) => {
     try {
       const url = searchValue
-        ? `http://localhost:3002/myAsk/getFilteredAsks?companyName=${searchValue}`
-        : `http://localhost:3002/myAsk/getAllAsks?page=${page}`;
+        ? `/api/myAsk/getFilteredAsks?companyName=${searchValue}`
+        : `/api/myAsk/getAllAsks?page=${page}`;
 
       const response = await axios.get(url, { withCredentials: true });
 
@@ -88,10 +88,9 @@ const AllAsks = () => {
   // Handle delete
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/myAsk/deleteMyAskById?id=${id}`,
-        { withCredentials: true }
-      );
+      await axios.delete(`/api/myAsk/deleteMyAskById?id=${id}`, {
+        withCredentials: true,
+      });
       window.location.reload();
       fetchAsks(value, currentPage); // Refresh data after deletion
     } catch (error) {

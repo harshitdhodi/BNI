@@ -17,10 +17,13 @@ const CreateMyAsk = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get("http://localhost:3002/department/getAllDepartment");
+        const response = await axios.get("/api/department/getAllDepartment");
         setDepartments(response.data.data); // Assuming the API response has a data field with an array of departments
       } catch (error) {
-        console.error("Failed to fetch departments:", error.response ? error.response.data : error.message);
+        console.error(
+          "Failed to fetch departments:",
+          error.response ? error.response.data : error.message
+        );
       }
     };
 
@@ -28,10 +31,18 @@ const CreateMyAsk = () => {
   }, []);
   const fetchCompanies = async (searchTerm) => {
     try {
-      const response = await axios.get(`http://localhost:3002/company/getFilteredGives?companyName=${searchTerm}`, { withCredentials: true });
-      setCompanyOptions(Array.isArray(response.data.companies) ? response.data.companies : []);
+      const response = await axios.get(
+        `/api/company/getFilteredGives?companyName=${searchTerm}`,
+        { withCredentials: true }
+      );
+      setCompanyOptions(
+        Array.isArray(response.data.companies) ? response.data.companies : []
+      );
     } catch (error) {
-      console.error("Failed to fetch companies:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch companies:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -55,7 +66,7 @@ const CreateMyAsk = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3002/myAsk/addMyAsk?user=${userId}`,
+        `/api/myAsk/addMyAsk?user=${userId}`,
         myAskData,
         {
           headers: {
@@ -67,9 +78,12 @@ const CreateMyAsk = () => {
 
       console.log("My Ask created successfully:", response.data);
 
-      navigate(`/myAsks/${userId}`);
+      navigate(`/api/myAsks/${userId}`);
     } catch (error) {
-      console.error("Failed to create My Ask:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to create My Ask:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -80,7 +94,10 @@ const CreateMyAsk = () => {
           <Link to="/" className="mr-2 text-red-300 hover:text-red-600">
             Dashboard /
           </Link>
-          <Link to={`/myAsks/${userId}`} className="mr-2 text-red-300 hover:text-red-600">
+          <Link
+            to={`/myAsks/${userId}`}
+            className="mr-2 text-red-300 hover:text-red-600"
+          >
             My Asks /
           </Link>
           <Link className="font-bold text-red-500"> Add My Ask</Link>
@@ -90,12 +107,18 @@ const CreateMyAsk = () => {
         <h1 className="text-xl font-bold mb-4">Add My Ask</h1>
         <form onSubmit={handleSubmit}>
           <div className="mb-4 w-1/2">
-            <label className="block text-gray-700 font-bold mb-2">Company Name</label>
-             <Autocomplete
+            <label className="block text-gray-700 font-bold mb-2">
+              Company Name
+            </label>
+            <Autocomplete
               freeSolo
               options={companyOptions}
               getOptionLabel={(option) => option.companyName || ""} // Ensure this returns a string
-              value={companyOptions.find((option) => option.companyName === companyName) || null}
+              value={
+                companyOptions.find(
+                  (option) => option.companyName === companyName
+                ) || null
+              }
               onInputChange={handleCompanyNameChange}
               renderInput={(params) => (
                 <TextField
@@ -109,7 +132,9 @@ const CreateMyAsk = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Department</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Department
+            </label>
             <select
               value={dept}
               onChange={(e) => setDept(e.target.value)}
@@ -125,7 +150,9 @@ const CreateMyAsk = () => {
             </select>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">Message</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Message
+            </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -133,7 +160,10 @@ const CreateMyAsk = () => {
               required
             />
           </div>
-          <button type="submit" className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+          >
             Add My Ask
           </button>
         </form>

@@ -1,11 +1,26 @@
 // src/components/BarChart.js
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
 
-ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+ChartJS.register(
+  Title,
+  Tooltip,
+  Legend,
+  BarElement,
+  CategoryScale,
+  LinearScale
+);
 
 const BarChart = () => {
   const [data, setData] = useState({ asks: 0, gives: 0, matches: 0 });
@@ -15,9 +30,15 @@ const BarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const asksResponse = await axios.get('http://localhost:3002/myAsk/getTotalAsks', { withCredentials: true });
-        const givesResponse = await axios.get('http://localhost:3002/myGives/totalGives', { withCredentials: true });
-        const matchesResponse = await axios.get('http://localhost:3002/match2/getTotalMatches', { withCredentials: true });
+        const asksResponse = await axios.get("/myAsk/getTotalAsks", {
+          withCredentials: true,
+        });
+        const givesResponse = await axios.get("/myGives/totalGives", {
+          withCredentials: true,
+        });
+        const matchesResponse = await axios.get("/match2/getTotalMatches", {
+          withCredentials: true,
+        });
 
         const asksData = asksResponse.data.TotalMyAsks || 0;
         const givesData = givesResponse.data.total || 0;
@@ -42,13 +63,13 @@ const BarChart = () => {
   if (error) return <p>Error: {error}</p>;
 
   const chartData = {
-    labels: ['Asks', 'Gives', 'Matches'],
+    labels: ["Asks", "Gives", "Matches"],
     datasets: [
       {
-        label: 'Total',
+        label: "Total",
         data: [data.asks, data.gives, data.matches],
-        backgroundColor: '#36A2EB',
-        borderColor: '#36A2EB',
+        backgroundColor: "#36A2EB",
+        borderColor: "#36A2EB",
         borderWidth: 1,
         barThickness: 40, // Adjust the thickness here
       },
@@ -59,7 +80,7 @@ const BarChart = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
       },
       tooltip: {
         callbacks: {
@@ -73,7 +94,7 @@ const BarChart = () => {
       x: {
         title: {
           display: true,
-          text: 'Categories',
+          text: "Categories",
         },
         ticks: {
           autoSkip: false, // Prevent skipping ticks
@@ -82,7 +103,7 @@ const BarChart = () => {
       y: {
         title: {
           display: true,
-          text: 'Total Count',
+          text: "Total Count",
         },
         beginAtZero: true,
       },
@@ -90,11 +111,10 @@ const BarChart = () => {
   };
 
   return (
-    <div className='lg:w-1/2 mt-5 p-3'>
+    <div className="lg:w-1/2 mt-5 p-3">
       <h2>Total Asks, Gives, and Matches (Bar Chart)</h2>
- 
-     <Bar data={chartData} options={options} />
-  
+
+      <Bar data={chartData} options={options} />
     </div>
   );
 };

@@ -3,12 +3,16 @@ import PropTypes from "prop-types";
 import Modal from "react-modal";
 const MemberImageModal = ({ isOpen, closeModal, bannerImg, profileImg }) => {
   return (
-    <Modal isOpen={isOpen} onRequestClose={closeModal} contentLabel="Member Image Modal">
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={closeModal}
+      contentLabel="Member Image Modal"
+    >
       <div className="bg-white p-8 rounded-lg shadow-lg">
         <div className="flex justify-center space-x-8">
           <div>
             <img
-              src={`http://localhost:3002/image/download/${bannerImg}`}
+              src={`api/image/download/${bannerImg}`}
               alt="Banner Image"
               className="max-w-full h-auto"
             />
@@ -16,7 +20,7 @@ const MemberImageModal = ({ isOpen, closeModal, bannerImg, profileImg }) => {
           </div>
           <div>
             <img
-              src={`http://localhost:3002/image/download/${profileImg}`}
+              src={`api/image/download/${profileImg}`}
               alt="Profile Image"
               className="max-w-full h-auto"
             />

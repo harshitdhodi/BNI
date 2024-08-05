@@ -52,26 +52,25 @@ export default function Modal({ open, onClose, userData, setUserData }) {
       formDataObj.append("lastName", formData.lastName);
       formDataObj.append("email", formData.email);
       formDataObj.append("photo", formData.photo);
-  
-      const response = await axios.put("http://localhost:3002/user/updateUser", formDataObj, {
+
+      const response = await axios.put("/user/updateUser", formDataObj, {
         withCredentials: true,
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
       console.log("User updated successfully:", response.data);
-  
+
       // Update userData in Navbar component
       setUserData(response.data.data);
-  
+
       onClose();
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating user details:", error);
     }
   };
-  
 
   const handleCancelEdit = () => {
     setIsEditing(false);
@@ -139,7 +138,7 @@ export default function Modal({ open, onClose, userData, setUserData }) {
               />
               {userData.photo && (
                 <img
-                  src={`http://localhost:3002/image/download/${userData.photo}`}
+                  src={`/image/download/${userData.photo}`}
                   alt="Selected"
                   className="mt-4 h-40 w-40 object-cover border border-gray-300 rounded-md"
                 />

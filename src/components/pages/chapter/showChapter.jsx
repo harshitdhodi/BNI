@@ -16,7 +16,7 @@ const ChapterList = () => {
   const fetchChapters = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/chapter/getchapter?page=${pageIndex + 1}`
+        `/api/chapter/getchapter?page=${pageIndex + 1}`
       );
       const dataWithIds = response.data.data.map((chapter, index) => ({
         ...chapter,
@@ -43,9 +43,7 @@ const ChapterList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/chapter/deleteChapter?id=${id}`
-      );
+      await axios.delete(`/api/chapter/deleteChapter?id=${id}`);
       fetchChapters();
     } catch (error) {
       console.error("There was an error deleting the chapter!", error);

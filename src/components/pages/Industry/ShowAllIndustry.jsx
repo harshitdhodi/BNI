@@ -16,7 +16,7 @@ const industryList = () => {
   const fetchindustrys = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/industry/getIndustries?page=${pageIndex + 1}`
+        `/api/industry/getIndustries?page=${pageIndex + 1}`
       );
       const dataWithIds = response.data.data.map((industry, index) => ({
         ...industry,
@@ -43,9 +43,7 @@ const industryList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(
-        `http://localhost:3002/industry/deleteIndustry?id=${id}`
-      );
+      await axios.delete(`/api/industry/deleteIndustry?id=${id}`);
       fetchindustrys();
     } catch (error) {
       console.error("There was an error deleting the industry!", error);

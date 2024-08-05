@@ -15,12 +15,9 @@ const EditCountry = () => {
 
   const fetchCountry = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:3002/country/getCountryById?id=${id}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`/api/country/getCountryById?id=${id}`, {
+        withCredentials: true,
+      });
       const { name, photo } = response.data;
       setName(name);
       setPhotos(photo);
@@ -42,7 +39,7 @@ const EditCountry = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3002/country/updateCountryById?id=${id}`,
+        `/api/country/updateCountryById?id=${id}`,
         formData,
         {
           headers: {

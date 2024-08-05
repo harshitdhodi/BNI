@@ -8,10 +8,13 @@ const CityForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     countryName: "",
+    cityName: "",
   });
   const [countryOptions, setCountryOptions] = useState([]);
+  const [cityOptions, setCityOptions] = useState([]);
   const navigate = useNavigate();
 
+  // Fetch country data on component mount
   useEffect(() => {
     const countries = countryList.getData();
     const formattedCountries = countries.map((country) => ({
@@ -20,6 +23,31 @@ const CityForm = () => {
     }));
     setCountryOptions(formattedCountries);
   }, []);
+
+  // Fetch cities based on selected country
+  useEffect(() => {
+    const fetchCities = async (countryName) => {
+      if (countryName) {
+        try {
+          const response = await axios.get(`/api/city/getAllCity?countryName=${countryName}`);
+          const cityData = response.data.data;
+          const formattedCities = cityData.map((city) => ({
+            value: city.name,
+            label: city.name,
+          }));
+          setCityOptions(formattedCities);
+        } catch (error) {
+          console.error("Failed to fetch cities:", error.response ? error.response.data : error.message);
+        }
+      } else {
+        setCityOptions([]);
+      }
+    };
+
+    if (formData.countryName) {
+      fetchCities(formData.countryName);
+    }
+  }, [formData.countryName]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,16 +64,20 @@ const CityForm = () => {
     }));
   };
 
+  const handleCityChange = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      cityName: selectedOption.label,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3002/city/addCity",
-        formData
-      );
+      const response = await axios.post("/api/city/addCity", formData);
       console.log("City added successfully:", response.data);
       // Redirect to city list page after successful submission
-      navigate("/city");
+      navigate("/cities");
     } catch (error) {
       console.error("Error adding city:", error);
     }
@@ -69,19 +101,6 @@ const CityForm = () => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
-              City Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-1/2 px-4 py-2 border rounded-md focus:outline-none focus:border-red-500 transition duration-300"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">
               Select Country
             </label>
             <Select
@@ -93,6 +112,21 @@ const CityForm = () => {
               className="w-1/2"
             />
           </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-bold mb-2">
+              Select City
+            </label>
+            <Select
+              options={cityOptions}
+              onChange={handleCityChange}
+              value={cityOptions.find(
+                (option) => option.label === formData.cityName
+              )}
+              className="w-1/2"
+              isDisabled={!formData.countryName} // Disable if no country is selected
+            />
+          </div>
+          
           <button
             type="submit"
             className="px-4 py-2 bg-[#CF2030] text-white rounded hover:bg-red-900 transition duration-300"

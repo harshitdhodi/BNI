@@ -17,7 +17,7 @@ const MyAllMatches = () => {
   const fetchMatches = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3002/match2/myAllMatches?userId=${userId}&page=${pageIndex + 1}`,
+        `/api/match2/myAllMatches?userId=${userId}&page=${pageIndex + 1}`,
         { withCredentials: true }
       );
 
@@ -40,7 +40,7 @@ const MyAllMatches = () => {
 
   // const handleDelete = async (id) => {
   //   try {
-  //     await axios.delete(`http://localhost:3002/match2/deleteMatchById?id=${id}`);
+  //     await axios.delete(`/match2/deleteMatchById?id=${id}`);
   //     fetchMatches(); // Refresh matches after deletion
   //   } catch (error) {
   //     console.error("Error deleting Match:", error);
@@ -89,17 +89,36 @@ const MyAllMatches = () => {
             >
               <td className="py-2 px-4">{match.id}</td>
               <td className="py-2 px-4">
-                <strong>Name:</strong> {match.companyName}<br />
-                <strong>Email:</strong> {match.email}<br />
-                <strong>Department:</strong> {match.dept}<br />
-                <strong>Phone Number:</strong> {match.phoneNumber}<br />
-                <strong>Web URL:</strong> <a href={match.webURL} target="_blank" rel="noopener noreferrer">{match.webURL}</a>
+                <strong>Name:</strong> {match.companyName}
+                <br />
+                <strong>Email:</strong> {match.email}
+                <br />
+                <strong>Department:</strong> {match.dept}
+                <br />
+                <strong>Phone Number:</strong> {match.phoneNumber}
+                <br />
+                <strong>Web URL:</strong>{" "}
+                <a
+                  href={match.webURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {match.webURL}
+                </a>
               </td>
               <td className="py-2 px-4">
-                <strong>Name:</strong> {match.user.name}<br />
-                <strong>Email:</strong> {match.user.email}<br />
-                <strong>Mobile No:</strong> {match.user.mobile}
-              </td>
+        {match.user ? (
+          <>
+            <strong>Name:</strong> {match.user.name}
+            <br />
+            <strong>Email:</strong> {match.user.email}
+            <br />
+            <strong>Mobile No:</strong> {match.user.mobile}
+          </>
+        ) : (
+          <span>No user information available</span>
+        )}
+      </td>
               {/* <td className="py-2 px-4">
                 <div className="flex py-1 px-4 items-center space-x-2">
                   <button>

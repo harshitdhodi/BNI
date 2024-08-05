@@ -30,15 +30,11 @@ const CreateCountry = () => {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:3002/country/addCountry",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const response = await axios.post("/api/country/addCountry", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       console.log("Country created successfully:", response.data);
 

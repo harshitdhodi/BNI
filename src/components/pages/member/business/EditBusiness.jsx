@@ -26,7 +26,7 @@ const EditBusiness = () => {
     const fetchBusinessDetails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3002/business/getBusinessBymyId?id=${id}`,
+          `/api/business/getBusinessBymyId?id=${id}`,
           { withCredentials: true }
         );
         const businessData = response.data.data;
@@ -39,15 +39,9 @@ const EditBusiness = () => {
         setDesignation(businessData.designation);
         setAboutCompany(businessData.aboutCompany);
         setCompanyAddress(businessData.companyAddress);
-        setBannerImgUrl(
-          `http://localhost:3002/image/download/${businessData.bannerImg}`
-        );
-        setProfileImgUrl(
-          `http://localhost:3002/image/download/${businessData.profileImg}`
-        );
-        setCatalogUrl(
-          `http://localhost:3002/pdf/download/${businessData.catalog}`
-        );
+        setBannerImgUrl(`/api/image/download/${businessData.bannerImg}`);
+        setProfileImgUrl(`/api/image/download/${businessData.profileImg}`);
+        setCatalogUrl(`/api/pdf/download/${businessData.catalog}`);
       } catch (error) {
         console.error("Error fetching business details:", error);
       }
@@ -59,9 +53,7 @@ const EditBusiness = () => {
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3002/industry/getAllIndustry"
-        );
+        const response = await axios.get("/api/industry/getAllIndustry");
         setIndustries(response.data.data);
       } catch (error) {
         console.error("Error fetching industries:", error);
@@ -91,7 +83,7 @@ const EditBusiness = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3002/business/updateBusinessById?id=${id}`,
+        `/api/business/updateBusinessById?id=${id}`,
         formData,
         {
           headers: {
@@ -101,7 +93,9 @@ const EditBusiness = () => {
         }
       );
       console.log("Business updated:", userId);
-      if (window.location.href === `http://localhost:5173/editMyBusiness/${id}`) {
+      if (
+        window.location.href === `http://localhost:5173/editMyBusiness/${id}`
+      ) {
         navigate(`/business`);
       } else {
         navigate(`/myBusiness/${userId}`);

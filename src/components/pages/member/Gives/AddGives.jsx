@@ -22,19 +22,32 @@ const CreateMyGives = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("http://localhost:3002/department/getAllDepartment");
-      setDepartments(Array.isArray(response.data.data) ? response.data.data : []);
+      const response = await axios.get("/api/department/getAllDepartment");
+      setDepartments(
+        Array.isArray(response.data.data) ? response.data.data : []
+      );
     } catch (error) {
-      console.error("Failed to fetch departments:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch departments:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
   const fetchCompanies = async (searchTerm) => {
     try {
-      const response = await axios.get(`http://localhost:3002/company/getFilteredGives?companyName=${searchTerm}`, { withCredentials: true });
-      setCompanyOptions(Array.isArray(response.data.companies) ? response.data.companies : []);
+      const response = await axios.get(
+        `/api/company/getFilteredGives?companyName=${searchTerm}`,
+        { withCredentials: true }
+      );
+      setCompanyOptions(
+        Array.isArray(response.data.companies) ? response.data.companies : []
+      );
     } catch (error) {
-      console.error("Failed to fetch companies:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch companies:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -60,7 +73,7 @@ const CreateMyGives = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3002/myGives/addMyGives?user=${userId}`,
+        `/api/myGives/addMyGives?user=${userId}`,
         myGivesData,
         {
           headers: {
@@ -74,7 +87,10 @@ const CreateMyGives = () => {
 
       navigate(`/myGives/${userId}`);
     } catch (error) {
-      console.error("Failed to create My Gives:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to create My Gives:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -98,12 +114,18 @@ const CreateMyGives = () => {
         <h1 className="text-xl font-bold mb-4">Add My Gives</h1>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Company Name</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Company Name
+            </label>
             <Autocomplete
               freeSolo
               options={companyOptions}
               getOptionLabel={(option) => option.companyName || ""} // Ensure this returns a string
-              value={companyOptions.find((option) => option.companyName === companyName) || null}
+              value={
+                companyOptions.find(
+                  (option) => option.companyName === companyName
+                ) || null
+              }
               onInputChange={handleCompanyNameChange}
               renderInput={(params) => (
                 <TextField
@@ -127,7 +149,9 @@ const CreateMyGives = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Phone Number</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Phone Number
+            </label>
             <input
               type="text"
               value={phoneNumber}
@@ -137,7 +161,9 @@ const CreateMyGives = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Website URL</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Website URL
+            </label>
             <input
               type="text"
               value={webURL}
@@ -147,11 +173,16 @@ const CreateMyGives = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">Department</label>
+            <label className="block text-gray-700 font-bold mb-2">
+              Department
+            </label>
             <Autocomplete
               options={departments}
               getOptionLabel={(option) => option.name || ""} // Ensure this returns a string
-              value={departments.find((department) => department.name === dept) || null}
+              value={
+                departments.find((department) => department.name === dept) ||
+                null
+              }
               onChange={(event, newValue) => {
                 setDept(newValue ? newValue.name : "");
               }}

@@ -1,9 +1,9 @@
 // src/components/PieChart.js
 
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
@@ -16,10 +16,16 @@ const PieChart = () => {
     const fetchData = async () => {
       try {
         // Fetch data from the endpoints
-        const asksResponse = await axios.get('http://localhost:3002/myAsk/getTotalAsks', { withCredentials: true });
-        const givesResponse = await axios.get('http://localhost:3002/myGives/totalGives', { withCredentials: true });
-        const matchesResponse = await axios.get('http://localhost:3002/match2/getTotalMatches', { withCredentials: true });
-// console.log(asksResponse.data.TotalMyAsks)
+        const asksResponse = await axios.get("/api/myAsk/getTotalAsks", {
+          withCredentials: true,
+        });
+        const givesResponse = await axios.get("/api/myGives/totalGives", {
+          withCredentials: true,
+        });
+        const matchesResponse = await axios.get("/api/match2/getTotalMatches", {
+          withCredentials: true,
+        });
+        // console.log(asksResponse.data.TotalMyAsks)
         // Extract data from responses
         const asksData = asksResponse.data.TotalMyAsks || 0;
         const givesData = givesResponse.data.total || 0;
@@ -48,11 +54,11 @@ const PieChart = () => {
 
   // Prepare data for the pie chart
   const chartData = {
-    labels: ['Asks', 'Gives', 'Matches'],
+    labels: ["Asks", "Gives", "Matches"],
     datasets: [
       {
         data: [data.asks, data.gives, data.matches],
-        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
         hoverOffset: 4,
       },
     ],
@@ -60,10 +66,10 @@ const PieChart = () => {
 
   return (
     <div>
-      <h2 className='font-bold'>Total Asks, Gives, and Matches</h2>
-    <div  className='w-[10cm]'>
-    <Pie data={chartData} />
-    </div>
+      <h2 className="font-bold">Total Asks, Gives, and Matches</h2>
+      <div className="w-[10cm]">
+        <Pie data={chartData} />
+      </div>
     </div>
   );
 };
