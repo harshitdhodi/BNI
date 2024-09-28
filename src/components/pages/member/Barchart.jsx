@@ -30,13 +30,13 @@ const BarChart = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const asksResponse = await axios.get("/myAsk/getTotalAsks", {
+        const asksResponse = await axios.get("/api/myAsk/getTotalAsks", {
           withCredentials: true,
         });
-        const givesResponse = await axios.get("/myGives/totalGives", {
+        const givesResponse = await axios.get("/api/myGives/totalGives", {
           withCredentials: true,
         });
-        const matchesResponse = await axios.get("/match2/getTotalMatches", {
+        const matchesResponse = await axios.get("/api/match2/getTotalMatches", {
           withCredentials: true,
         });
 

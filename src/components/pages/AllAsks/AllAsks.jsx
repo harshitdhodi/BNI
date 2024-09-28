@@ -16,14 +16,22 @@ const AllAsks = () => {
   const [modalData, setModalData] = useState({});
   const pageSize = 5;
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   // Fetch data based on search value or page number
   const fetchAsks = async (searchValue = "", page = 1) => {
     try {
+      const token = getCookie("token");
       const url = searchValue
         ? `/api/myAsk/getFilteredAsks?companyName=${searchValue}`
         : `/api/myAsk/getAllAsks?page=${page}`;
 
-      const response = await axios.get(url, { withCredentials: true });
+      const response = await axios.get(url, { headers: {
+            Authorization: `Bearer ${token}`,
+          }, withCredentials: true });
 
       // Log the API response to understand its structure
       console.log("API Response:", response);
@@ -88,7 +96,11 @@ const AllAsks = () => {
   // Handle delete
   const handleDelete = async (id) => {
     try {
+      const token = getCookie("token");
       await axios.delete(`/api/myAsk/deleteMyAskById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       window.location.reload();

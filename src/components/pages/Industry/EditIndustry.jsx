@@ -6,14 +6,22 @@ const EditIndustry = () => {
   const { id } = useParams();
   const [name, setName] = useState("");
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchIndustry();
   }, [id]);
 
   const fetchIndustry = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/industry/getIndustryById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       const { name } = response.data;
@@ -29,8 +37,10 @@ const EditIndustry = () => {
     const industryData = { name };
 
     try {
+      const token = getCookie("token");
       await axios.put(`/api/industry/updateIndustry?id=${id}`, industryData, {
         withCredentials: true,
+        Authorization: `Bearer ${token}`,
       });
       setName("");
       navigate("/industryList");

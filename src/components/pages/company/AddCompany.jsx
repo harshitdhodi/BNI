@@ -16,7 +16,11 @@ const AddCompany = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const companyNameFromURL = queryParams.get("name"); // Extract company name from URL
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     if (companyNameFromURL) {
       setCompanyName(companyNameFromURL);
@@ -37,9 +41,11 @@ const AddCompany = () => {
     if (profileImg) formData.append("profileImg", profileImg);
 
     try {
+      const token = getCookie("token");
       const response = await axios.post(`/api/company/createCompany`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
         withCredentials: true,
       });

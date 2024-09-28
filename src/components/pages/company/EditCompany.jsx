@@ -15,14 +15,22 @@ const EditCompany = () => {
     companyAddress: "",
   });
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchCompany();
   }, [id]);
 
   const fetchCompany = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/company/getCompanyById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
         timeout: 10000,
       });
@@ -87,12 +95,16 @@ const EditCompany = () => {
     });
 
     try {
+      const token = getCookie("token");
       const response = await axios.put(
         `/api/company/updateCompanyById?id=${id}`,
         formData,
         {
+          
           withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "multipart/form-data" ,
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 

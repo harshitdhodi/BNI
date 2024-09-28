@@ -13,7 +13,11 @@ const CityForm = () => {
   const [countryOptions, setCountryOptions] = useState([]);
   const [cityOptions, setCityOptions] = useState([]);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   // Fetch country data on component mount
   useEffect(() => {
     const countries = countryList.getData();
@@ -29,7 +33,16 @@ const CityForm = () => {
     const fetchCities = async (countryName) => {
       if (countryName) {
         try {
-          const response = await axios.get(`/api/city/getAllCity?countryName=${countryName}`);
+          const token = getCookie("token");
+          const response = await axios.get(
+            `/api/city/getAllCity?countryName=${countryName}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              withCredentials: true,
+            }
+          );
           const cityData = response.data.data;
           const formattedCities = cityData.map((city) => ({
             value: city.name,
@@ -37,7 +50,10 @@ const CityForm = () => {
           }));
           setCityOptions(formattedCities);
         } catch (error) {
-          console.error("Failed to fetch cities:", error.response ? error.response.data : error.message);
+          console.error(
+            "Failed to fetch cities:",
+            error.response ? error.response.data : error.message
+          );
         }
       } else {
         setCityOptions([]);
@@ -74,7 +90,7 @@ const CityForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/api/city/addCity", formData);
+      const response = await axios.post("/city/addCity", formData);
       console.log("City added successfully:", response.data);
       // Redirect to city list page after successful submission
       navigate("/cities");
@@ -126,7 +142,7 @@ const CityForm = () => {
               isDisabled={!formData.countryName} // Disable if no country is selected
             />
           </div>
-          
+
           <button
             type="submit"
             className="px-4 py-2 bg-[#CF2030] text-white rounded hover:bg-red-900 transition duration-300"

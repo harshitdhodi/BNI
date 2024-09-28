@@ -19,15 +19,26 @@ const BusinessList = () => {
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const pageSize = 5;
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchBusinesses();
   }, [pageIndex]);
 
   const fetchBusinesses = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
-        `/api/business/getbusiness?page=${pageIndex + 1}&limit=${pageSize}`
+        `/api/business/getbusiness?page=${pageIndex + 1}&limit=${pageSize}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       setBusinesses(response.data.data);
       setPageCount(Math.ceil(response.data.total / pageSize));
@@ -54,9 +65,11 @@ const BusinessList = () => {
     formData.append("file", file);
 
     try {
+      const token = getCookie("token");
       await axios.post(`/api/business/uploadCatalog?id=${businessId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
       fetchBusinesses(); // Refresh the list after upload
@@ -72,8 +85,13 @@ const BusinessList = () => {
 
   const handleDelete = async (businessId) => {
     try {
+      const token = getCookie("token");
       await axios.delete(`/api/business/deletebusiness?id=${businessId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
+       
       });
       fetchBusinesses(); // Refresh the list after deletion
     } catch (error) {

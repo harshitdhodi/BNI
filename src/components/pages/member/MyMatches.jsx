@@ -9,20 +9,27 @@ const MyMatches = () => {
   const [pageCount, setPageCount] = useState(1);
   const pageSize = 5;
   const { userId, companyName, dept } = useParams(); // Ensure useParams includes userId, companyName, and dept
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchMatches();
   }, [pageIndex, userId, companyName, dept]);
 
   const fetchMatches = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/match2/myMatchesByCompanyAndDept?companyName=${encodeURIComponent(
           companyName
         )}&dept=${encodeURIComponent(dept)}&userId=${encodeURIComponent(
           userId
         )}&page=${pageIndex + 1}`,
-        { withCredentials: true }
+        {  headers: {
+          Authorization: `Bearer ${token}`,
+        },withCredentials: true }
       );
 
       console.log("My Matches Response:", response.data);
@@ -44,7 +51,13 @@ const MyMatches = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/match2/deleteMatchById?id=${id}`);
+      const token = getCookie("token");
+      await axios.delete(`/api/match2/deleteMatchById?id=${id}` ,  {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       fetchMatches(); // Refresh matches after deletion
     } catch (error) {
       console.error("Error deleting Match:", error);

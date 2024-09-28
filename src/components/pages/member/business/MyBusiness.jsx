@@ -13,16 +13,23 @@ const MyBusinessList = () => {
   const { userId } = useParams();
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [showModal, setShowModal] = useState(false);
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchBusinesses();
   }, [pageIndex, userId]);
 
   const fetchBusinesses = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/business/getbusinessByuserId?userId=${userId}&page=${pageIndex + 1}`,
-        { withCredentials: true, timeout: 5000 }
+        { headers: {
+          Authorization: `Bearer ${token}`,
+        }, withCredentials: true, timeout: 5000 }
       );
       console.log(response.data.data);
       if (response.data && response.data.data) {
@@ -42,10 +49,14 @@ const MyBusinessList = () => {
   };
 
   const handleDelete = async (id) => {
+    const token = getCookie("token");
     if (window.confirm("Are you sure you want to delete this business?")) {
       try {
         const response = await axios.delete("/api/business/deletebusiness", {
           params: { id },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           withCredentials: true,
         });
         if (response.status === 200) {
@@ -263,7 +274,7 @@ const MyBusinessList = () => {
                   <td className="py-2 px-6">{business.companyName}</td>
                   <td className="py-2 px-6">
                     <img
-                      src={`/api/image/download/${business.profileImg}`}
+                      src={`/image/download/${business.profileImg}`}
                       alt="Profile"
                       width="50"
                       height="50"
@@ -320,7 +331,7 @@ const MyBusinessList = () => {
                   </td>
                   <td className="py-2 px-6">
                     {business.catalog ? (
-                      <a href={`/api/pdf/download/${business.catalog}`} download>
+                      <a href={`/pdf/download/${business.catalog}`} download>
                         <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition">
                           Download
                         </button>
@@ -338,7 +349,7 @@ const MyBusinessList = () => {
                   <td className="py-2 px-4">
                     <div className="flex py-1 px-4 -ml-2 space-x-2">
                       <button>
-                        <Link to={`/api/editMyBusiness/${userId}/${business._id}`}>
+                        <Link to={`/editMyBusiness/${userId}/${business._id}`}>
                           <FaEdit className="text-blue-500 text-lg" />
                         </Link>
                       </button>

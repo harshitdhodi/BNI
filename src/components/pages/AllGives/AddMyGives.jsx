@@ -19,7 +19,11 @@ const CreateMyGivesByEmail = () => {
   const [companyOptions, setCompanyOptions] = useState([]);
   const [selectedCompanyName, setSelectedCompanyName] = useState("");
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchDepartments();
     fetchEmails();
@@ -27,7 +31,15 @@ const CreateMyGivesByEmail = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("/api/department/getAllDepartment");
+      const token = getCookie("token");
+      const response = await axios.get(`/api/department/getAllDepartment`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
       setDepartments(response.data.data);
     } catch (error) {
       console.error(
@@ -39,9 +51,15 @@ const CreateMyGivesByEmail = () => {
 
   const fetchCompanies = async (searchTerm) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/company/getFilteredGives?companyName=${searchTerm}`,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       setCompanyOptions(
         Array.isArray(response.data.companies) ? response.data.companies : []
@@ -71,7 +89,11 @@ const CreateMyGivesByEmail = () => {
 
   const fetchEmails = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get("/api/member/getAllmemberDropdown", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       setEmails(response.data.data);
@@ -95,7 +117,11 @@ const CreateMyGivesByEmail = () => {
     e.preventDefault();
 
     try {
+      const token = getCookie("token");
       await axios.post("/api/myGives/addMyGivesbyEmail", myGive, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       navigate("/allGives");
@@ -185,7 +211,7 @@ const CreateMyGivesByEmail = () => {
                       renderInput={(params) => (
                         <TextField
                           {...params}
-                          label="Select or Add Company Name"
+                          label="Add Company Name"
                           variant="outlined"
                           className="w-full"
                           required

@@ -3,11 +3,17 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
-const industryList = () => {
+const IndustryList = () => {
   const [industrys, setindustrys] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCount, setPageCount] = useState(1);
   const pageSize = 5;
+
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
 
   useEffect(() => {
     fetchindustrys();
@@ -15,8 +21,15 @@ const industryList = () => {
 
   const fetchindustrys = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
-        `/api/industry/getIndustries?page=${pageIndex + 1}`
+        `/api/industry/getIndustries?page=${pageIndex + 1}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       const dataWithIds = response.data.data.map((industry, index) => ({
         ...industry,
@@ -43,7 +56,13 @@ const industryList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/industry/deleteIndustry?id=${id}`);
+      const token = getCookie("token");
+      await axios.delete(`/api/industry/deleteIndustry?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       fetchindustrys();
     } catch (error) {
       console.error("There was an error deleting the industry!", error);
@@ -54,7 +73,7 @@ const industryList = () => {
     <div className="p-4 overflow-x-auto">
       <div className="flex flex-wrap justify-between items-center mb-4">
         <h1 className="text-xl font-bold mb-3 ml-2">Industry List</h1>
-        <button className="px-4 py-2 mt-3 bg-[#CF2030] text-white rounded  transition duration-300">
+        <button className="px-4 py-2 mt-3 bg-[#CF2030] text-white rounded transition duration-300">
           <Link to="/addIndustry">Add New Industry</Link>
         </button>
       </div>
@@ -62,9 +81,9 @@ const industryList = () => {
       <table className="w-full mt-4 border-collapse shadow-lg overflow-x-scroll">
         <thead>
           <tr className="bg-[#CF2030] text-white text-left uppercase font-serif text-[14px]">
-            <th className="py-2 px-6 ">ID</th>
-            <th className="py-2 px-6 ">Industry Name</th>
-            <th className="py-2 px-6 ">Actions</th>
+            <th className="py-2 px-6">ID</th>
+            <th className="py-2 px-6">Industry Name</th>
+            <th className="py-2 px-6">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -96,14 +115,14 @@ const industryList = () => {
         <button
           onClick={handlePreviousPage}
           disabled={pageIndex === 0}
-          className="px-3 py-1 bg-[#CF2030] text-white flex justify-center rounded  transition"
+          className="px-3 py-1 bg-[#CF2030] text-white flex justify-center rounded transition"
         >
           {"<"}
         </button>
         <button
           onClick={handleNextPage}
           disabled={pageIndex + 1 >= pageCount}
-          className="px-3 py-1 bg-[#CF2030] text-white rounded  transition"
+          className="px-3 py-1 bg-[#CF2030] text-white rounded transition"
         >
           {">"}
         </button>
@@ -118,4 +137,4 @@ const industryList = () => {
   );
 };
 
-export default industryList; // Ensure this is a default export
+export default IndustryList; // Make sure the export matches the component name

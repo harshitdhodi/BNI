@@ -13,11 +13,23 @@ const CreateMyAsk = () => {
   const [companyOptions, setCompanyOptions] = useState([]);
   const navigate = useNavigate();
   const { userId } = useParams();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get("/api/department/getAllDepartment");
+        const token = getCookie("token");
+        const response = await axios.get("/api/department/getAllDepartment" ,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
         setDepartments(response.data.data); // Assuming the API response has a data field with an array of departments
       } catch (error) {
         console.error(
@@ -29,14 +41,22 @@ const CreateMyAsk = () => {
 
     fetchDepartments();
   }, []);
+
   const fetchCompanies = async (searchTerm) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/company/getFilteredGives?companyName=${searchTerm}`,
-        { withCredentials: true }
+        {    headers: {
+          Authorization: `Bearer ${token}`,
+        },withCredentials: true }
       );
+
+      // Update to use response.data.companies
       setCompanyOptions(
-        Array.isArray(response.data.companies) ? response.data.companies : []
+        Array.isArray(response.data.companies)
+          ? response.data.companies.map((company) => company.companyName)
+          : []
       );
     } catch (error) {
       console.error(
@@ -52,7 +72,9 @@ const CreateMyAsk = () => {
 
   const handleCompanyNameChange = (event, newValue) => {
     setCompanyName(newValue);
-    debouncedFetchCompanies(newValue);
+    if (newValue) {
+      debouncedFetchCompanies(newValue);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -65,12 +87,14 @@ const CreateMyAsk = () => {
     };
 
     try {
+      const token = getCookie("token");
       const response = await axios.post(
         `/api/myAsk/addMyAsk?user=${userId}`,
         myAskData,
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -78,7 +102,7 @@ const CreateMyAsk = () => {
 
       console.log("My Ask created successfully:", response.data);
 
-      navigate(`/api/myAsks/${userId}`);
+      navigate(`/myAsks/${userId}`);
     } catch (error) {
       console.error(
         "Failed to create My Ask:",
@@ -113,12 +137,7 @@ const CreateMyAsk = () => {
             <Autocomplete
               freeSolo
               options={companyOptions}
-              getOptionLabel={(option) => option.companyName || ""} // Ensure this returns a string
-              value={
-                companyOptions.find(
-                  (option) => option.companyName === companyName
-                ) || null
-              }
+              value={companyName}
               onInputChange={handleCompanyNameChange}
               renderInput={(params) => (
                 <TextField

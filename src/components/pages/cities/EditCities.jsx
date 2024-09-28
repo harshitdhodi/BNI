@@ -9,7 +9,11 @@ const EditCity = () => {
   const [countryName, setCountryName] = useState("");
   const [countryOptions, setCountryOptions] = useState([]);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchCity();
     fetchCountryOptions();
@@ -17,7 +21,11 @@ const EditCity = () => {
 
   const fetchCity = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/city/getCityById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       const { name, countryName } = response.data;
@@ -61,8 +69,12 @@ const EditCity = () => {
 
     try {
       if (id) {
+        const token = getCookie("token");
         // Update existing city
         await axios.put(`/api/city/updateCity?id=${id}`, cityData, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           withCredentials: true,
         });
       } else {
@@ -101,7 +113,6 @@ const EditCity = () => {
           {id ? "Edit City" : "Create City"}
         </h1>
         <form onSubmit={handleSubmit}>
-         
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               Select Country

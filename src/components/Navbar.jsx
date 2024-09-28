@@ -16,15 +16,22 @@ export default function Navbar({ toggleSidebar }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  // const { userId } = useParams();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   // Fetch user data function
   const fetchUserData = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/user/getUserById`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
-      setUserData(response.data.data);
+      setUserData(response.data.data || {}); // Ensure userData is an object
     } catch (error) {
       console.error("Error fetching user data:", error);
     }
@@ -48,7 +55,13 @@ export default function Navbar({ toggleSidebar }) {
   // Handle logout
   const handleLogout = async () => {
     try {
-      await axios.post("/api/user/logout");
+      const token = getCookie("token");
+      await axios.post("/api/user/logout" ,  {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       console.log("User logged out successfully");
       Cookies.remove("token");
       window.location.href = "/login";
@@ -87,12 +100,12 @@ export default function Navbar({ toggleSidebar }) {
             className="flex items-center cursor-pointer"
             onClick={handleUserIconClick}
           >
-            {userData.firstName && (
+            {userData?.firstName && (
               <p className="text-black mr-2">
                 {userData.firstName} {userData.lastName}
               </p>
             )}
-            {userData.photo ? (
+            {userData?.photo ? (
               <img
                 src={`/api/image/download/${userData.photo}`}
                 alt="User Profile"
@@ -143,3 +156,4 @@ export default function Navbar({ toggleSidebar }) {
     </div>
   );
 }
+

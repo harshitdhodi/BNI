@@ -15,7 +15,11 @@ const EditAllAsks = () => {
   const [companyOptions, setCompanyOptions] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchMyAsk();
     fetchDepartments();
@@ -23,7 +27,11 @@ const EditAllAsks = () => {
 
   const fetchMyAsk = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/myAsk/getMyAskById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       console.log("API response:", response);
@@ -44,7 +52,15 @@ const EditAllAsks = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("/api/department/getAllDepartment");
+      const token = getCookie("token");
+      const response = await axios.get(`/api/department/getAllDepartment`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true
+        }
+      );
       setDepartments(response.data.data); // Assuming the API response has a data field with an array of departments
     } catch (error) {
       console.error(
@@ -66,7 +82,11 @@ const EditAllAsks = () => {
     e.preventDefault();
 
     try {
+      const token = getCookie("token");
       await axios.put(`/api/myAsk/updateMyAsk?id=${id}`, myAsk, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
 
@@ -81,9 +101,12 @@ const EditAllAsks = () => {
 
   const fetchCompanyOptions = async (searchTerm) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/company/getFilteredGives?companyName=${searchTerm}`,
-        { withCredentials: true }
+        { headers: {
+          Authorization: `Bearer ${token}`,
+        }, withCredentials: true }
       );
       setCompanyOptions(response.data.companies || []);
     } catch (error) {

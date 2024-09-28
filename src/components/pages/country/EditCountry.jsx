@@ -8,14 +8,22 @@ const EditCountry = () => {
   const [photos, setPhotos] = useState([]);
   const [newImages, setNewImages] = useState([]);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchCountry();
   }, [id]);
 
   const fetchCountry = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/country/getCountryById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       const { name, photo } = response.data;
@@ -38,12 +46,14 @@ const EditCountry = () => {
     console.log("FormData before axios request:", formData); // Debugging: Check FormData content before sending
 
     try {
+      const token = getCookie("token");
       const response = await axios.put(
         `/api/country/updateCountryById?id=${id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }

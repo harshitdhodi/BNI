@@ -8,15 +8,26 @@ const ChapterList = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCount, setPageCount] = useState(1);
   const pageSize = 5;
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchChapters();
   }, [pageIndex]);
 
   const fetchChapters = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
-        `/api/chapter/getchapter?page=${pageIndex + 1}`
+        `/api/chapter/getchapter?page=${pageIndex + 1}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       const dataWithIds = response.data.data.map((chapter, index) => ({
         ...chapter,
@@ -43,7 +54,15 @@ const ChapterList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/chapter/deleteChapter?id=${id}`);
+      const token = getCookie("token");
+      await axios.delete(`/api/chapter/deleteChapter?id=${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
       fetchChapters();
     } catch (error) {
       console.error("There was an error deleting the chapter!", error);

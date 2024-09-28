@@ -6,6 +6,6 @@ import './index.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <App className ="bg-gray-200" />
   </React.StrictMode>
 );

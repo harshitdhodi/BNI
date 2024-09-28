@@ -13,11 +13,21 @@ const CreateChapter = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   const fetchCountryData = async () => {
     try {
-      const response = await axios.get("/api/country/getCountry");
-      console.log(response.data.data)
+      const token = getCookie("token");
+      const response = await axios.get(`/api/country/getCountry` , {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+      console.log(response.data.data);
       const countryList = response.data.data.map((country) => ({
         isoCode: country.isoCode,
         name: `${country.name}`,
@@ -25,7 +35,10 @@ const CreateChapter = () => {
       setCountryData(countryList);
     } catch (error) {
       setError("Failed to fetch countries");
-      console.error("Failed to fetch countries:", error.response ? error.response.data : error.message);
+      console.error(
+        "Failed to fetch countries:",
+        error.response ? error.response.data : error.message
+      );
     } finally {
       setLoading(false);
     }
@@ -34,12 +47,23 @@ const CreateChapter = () => {
   const fetchCities = async (countryName) => {
     if (countryName) {
       try {
-        const response = await axios.get(`/api/city/getCityByCountry?countryName=${countryName}`);
-        console.log(response)
+        const token = getCookie("token");
+        const response = await axios.get(
+          `/api/city/getCityByCountry?countryName=${countryName}`,{
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        console.log(response);
         const cityData = response.data;
         setCities(cityData.map((city) => ({ name: city.name })));
       } catch (error) {
-        console.error("Failed to fetch cities:", error.response ? error.response.data : error.message);
+        console.error(
+          "Failed to fetch cities:",
+          error.response ? error.response.data : error.message
+        );
       }
     } else {
       setCities([]);
@@ -73,6 +97,7 @@ const CreateChapter = () => {
     };
 
     try {
+      const token = getCookie("token");
       const response = await axios.post(
         "/api/chapter/addChapter",
         chapterData,
@@ -80,6 +105,7 @@ const CreateChapter = () => {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -131,9 +157,11 @@ const CreateChapter = () => {
                 getOptionLabel={(option) => option.name}
                 value={country}
                 onChange={(event, newValue) => setCountry(newValue)}
-                filterOptions={(options, state) => 
-                  options.filter((option) => 
-                    option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                filterOptions={(options, state) =>
+                  options.filter((option) =>
+                    option.name
+                      .toLowerCase()
+                      .includes(state.inputValue.toLowerCase())
                   )
                 }
                 renderInput={(params) => (
@@ -153,9 +181,11 @@ const CreateChapter = () => {
                 getOptionLabel={(option) => option.name}
                 value={city}
                 onChange={handleCityInputChange}
-                filterOptions={(options, state) => 
-                  options.filter((option) => 
-                    option.name.toLowerCase().includes(state.inputValue.toLowerCase())
+                filterOptions={(options, state) =>
+                  options.filter((option) =>
+                    option.name
+                      .toLowerCase()
+                      .includes(state.inputValue.toLowerCase())
                   )
                 }
                 renderInput={(params) => (
@@ -170,7 +200,9 @@ const CreateChapter = () => {
               />
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700 font-bold mb-2">Chapter Name</label>
+              <label className="block text-gray-700 font-bold mb-2">
+                Chapter Name
+              </label>
               <TextField
                 value={name}
                 onChange={(e) => setName(e.target.value)}

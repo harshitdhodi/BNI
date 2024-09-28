@@ -9,16 +9,26 @@ const MyAllMatches = () => {
   const [pageCount, setPageCount] = useState(1);
   const pageSize = 5;
   const { userId } = useParams(); // Get userId from URL parameters
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchMatches();
   }, [pageIndex, userId]);
 
   const fetchMatches = async () => {
     try {
+      const token = getCookie("token"); // Get the token from local storage or session storage
       const response = await axios.get(
-        `/api/match2/myAllMatches?userId=${userId}&page=${pageIndex + 1}`,
-        { withCredentials: true }
+        `/api/match2/forAdminAllMatches?userId=${userId}&page=${pageIndex + 1}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the request headers
+          },
+          withCredentials: true,
+        }
       );
 
       console.log("All Matches Response:", response.data);
@@ -107,18 +117,18 @@ const MyAllMatches = () => {
                 </a>
               </td>
               <td className="py-2 px-4">
-        {match.user ? (
-          <>
-            <strong>Name:</strong> {match.user.name}
-            <br />
-            <strong>Email:</strong> {match.user.email}
-            <br />
-            <strong>Mobile No:</strong> {match.user.mobile}
-          </>
-        ) : (
-          <span>No user information available</span>
-        )}
-      </td>
+                {match.user ? (
+                  <>
+                    <strong>Name:</strong> {match.user.name}
+                    <br />
+                    <strong>Email:</strong> {match.user.email}
+                    <br />
+                    <strong>Mobile No:</strong> {match.user.mobile}
+                  </>
+                ) : (
+                  <span>No user information available</span>
+                )}
+              </td>
               {/* <td className="py-2 px-4">
                 <div className="flex py-1 px-4 items-center space-x-2">
                   <button>

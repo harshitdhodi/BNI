@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -17,7 +18,11 @@ export default function Modal({ open, onClose, userData, setUserData }) {
     email: "",
     photo: "",
   });
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     if (open) {
       setFormData({
@@ -47,15 +52,17 @@ export default function Modal({ open, onClose, userData, setUserData }) {
 
   const handleFormSubmit = async () => {
     try {
+      const token = getCookie("token");
       const formDataObj = new FormData();
       formDataObj.append("firstName", formData.firstName);
       formDataObj.append("lastName", formData.lastName);
       formDataObj.append("email", formData.email);
       formDataObj.append("photo", formData.photo);
 
-      const response = await axios.put("/user/updateUser", formDataObj, {
+      const response = await axios.put("/api/user/updateUser", formDataObj, {
         withCredentials: true,
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -138,7 +145,7 @@ export default function Modal({ open, onClose, userData, setUserData }) {
               />
               {userData.photo && (
                 <img
-                  src={`/image/download/${userData.photo}`}
+                  src={`/api/image/download/${userData.photo}`}
                   alt="Selected"
                   className="mt-4 h-40 w-40 object-cover border border-gray-300 rounded-md"
                 />

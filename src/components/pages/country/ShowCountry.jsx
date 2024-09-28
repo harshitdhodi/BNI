@@ -8,15 +8,25 @@ const CountryList = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCount, setPageCount] = useState(1);
   const pageSize = 5;
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchCountries();
   }, [pageIndex]);
 
   const fetchCountries = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
-        `/api/country/getCountry?page=${pageIndex + 1}`
+        `/api/country/getCountry?page=${pageIndex + 1}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
       const dataWithIds = response.data.data.map((country, index) => ({
         ...country,
@@ -43,7 +53,13 @@ const CountryList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/country/deleteCountry?id=${id}`);
+      const token = getCookie("token");
+      await axios.delete(`/api/country/deleteCountry?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       fetchCountries();
     } catch (error) {
       console.error("There was an error deleting the country!", error);

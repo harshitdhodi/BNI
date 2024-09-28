@@ -8,7 +8,11 @@ const CreateCountry = () => {
   const [name, setName] = useState("");
   const [photo, setphoto] = useState([]);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   // Extract countries into an array of objects suitable for react-select
   const countryOptions = Object.keys(countries).map((countryCode) => ({
     value: countryCode,
@@ -30,10 +34,12 @@ const CreateCountry = () => {
     });
 
     try {
+      const token = getCookie("token");
       const response = await axios.post("/api/country/addCountry", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-        },
+          Authorization: `Bearer ${token}`,
+        },     withCredentials: true,
       });
 
       console.log("Country created successfully:", response.data);

@@ -21,13 +21,20 @@ const EditBusiness = () => {
   const [catalog, setCatalog] = useState(null);
   const [catalogUrl, setCatalogUrl] = useState("");
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     const fetchBusinessDetails = async () => {
       try {
+        const token = getCookie("token");
         const response = await axios.get(
           `/api/business/getBusinessBymyId?id=${id}`,
-          { withCredentials: true }
+          { headers: {
+            Authorization: `Bearer ${token}`,
+          }, withCredentials: true }
         );
         const businessData = response.data.data;
         setCompanyName(businessData.companyName);
@@ -53,7 +60,13 @@ const EditBusiness = () => {
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        const response = await axios.get("/api/industry/getAllIndustry");
+        const token = getCookie("token")
+        const response = await axios.get("/api/industry/getAllIndustry" , {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
         setIndustries(response.data.data);
       } catch (error) {
         console.error("Error fetching industries:", error);
@@ -82,12 +95,14 @@ const EditBusiness = () => {
     if (catalog) formData.append("catalog", catalog);
 
     try {
+      const token = getCookie("token");
       const response = await axios.put(
         `/api/business/updateBusinessById?id=${id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }

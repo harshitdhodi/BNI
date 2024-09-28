@@ -14,7 +14,11 @@ const MyAskList = () => {
 
   const { userId } = useParams();
   console.log(userId);
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchMyAsks();
   }, [pageIndex, userId]);
@@ -25,9 +29,14 @@ const MyAskList = () => {
 
   const fetchMyGives = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/myGives/getMyGives?userId=${userId}&page=${pageIndex + 1}`,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+           withCredentials: true }
       );
 
       console.log("My Gives Response:", response.data);
@@ -54,10 +63,17 @@ const MyAskList = () => {
 
   const fetchMyAsks = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/myAsk/getMyAsk?userId=${userId}&page=${pageIndex + 1}`,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
+
       console.log("My Asks Response:", response.data);
 
       if (response.data && response.data.data) {
@@ -66,12 +82,7 @@ const MyAskList = () => {
           id: pageIndex * pageSize + index + 1,
         }));
         setMyAsks(dataWithIds);
-
-        if (response.data.total != null) {
-          setPageCount(Math.ceil(response.data.total / pageSize));
-        } else {
-          setPageCount(Math.ceil(response.data.data.length / pageSize));
-        }
+        setPageCount(Math.ceil(response.data.total / pageSize));
       } else {
         console.error("Unexpected response structure:", response.data);
       }
@@ -94,7 +105,11 @@ const MyAskList = () => {
 
   const handleDelete = async (id) => {
     try {
+      const token = getCookie("token");
       await axios.delete(`/api/myAsk/deleteMyAskById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       fetchMyAsks();
@@ -127,7 +142,7 @@ const MyAskList = () => {
       <div className="flex flex-wrap justify-between items-center mb-4">
         <h1 className="text-xl font-bold mb-3 ml-2">My Asks List</h1>
         <button className="px-4 py-2 mt-3 bg-[#CF2030] text-white rounded transition duration-300">
-          <Link to={`/createMyAsks/${userId}`}>Add New My Ask</Link>
+          <Link to={`/createMyAsks/${userId}`}>Add Ask</Link>
         </button>
       </div>
 

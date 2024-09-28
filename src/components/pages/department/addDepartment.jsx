@@ -6,19 +6,25 @@ const CreateDepartment = () => {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const departmentData = { name };
 
     try {
+      const token = getCookie("token");
       const response = await axios.post(
         "/api/department/addDepartment",
         departmentData,
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }

@@ -8,14 +8,26 @@ const CityList = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageCount, setPageCount] = useState(1);
   const pageSize = 5;
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchCities();
   }, [pageIndex]);
 
   const fetchCities = async () => {
     try {
-      const response = await axios.get(`/api/city/getCity?page=${pageIndex + 1}`);
+      const token = getCookie("token");
+      const response = await axios.get(`/api/city/getCity?page=${pageIndex + 1}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
       console.log(response.data.data);
       const dataWithIds = response.data.data.map((city, index) => ({
         ...city,
@@ -42,7 +54,15 @@ const CityList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/city/deleteCity?id=${id}`);
+      const token = getCookie("token");
+      await axios.delete(`/api/city/deleteCity?id=${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
       fetchCities();
     } catch (error) {
       console.error("There was an error deleting the city!", error);

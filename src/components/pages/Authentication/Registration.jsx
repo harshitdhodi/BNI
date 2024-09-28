@@ -11,7 +11,11 @@ const UserForm = () => {
     confirm_password: "",
   });
   const navigate = useNavigate(); // Initialize useNavigate
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -19,7 +23,13 @@ const UserForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/user/register", formData);
+      const token = getCookie("token");
+      const response = await axios.post("/api/user/register", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }, formData);
       console.log("Form submitted successfully:", response.data);
       // Clear form fields after successful submission
       setFormData({

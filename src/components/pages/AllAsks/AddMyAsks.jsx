@@ -9,7 +9,7 @@ const CreateMyAsk = () => {
   const [myAsk, setMyAsk] = useState({
     email: "",
     companyName: "",
-    companyId: "",  // Add companyId to state
+    // companyId: "", // Add companyId to state
     dept: "",
     message: "",
   });
@@ -18,15 +18,28 @@ const CreateMyAsk = () => {
   const [companyOptions, setCompanyOptions] = useState([]);
   const [emails, setEmails] = useState([]);
   const navigate = useNavigate();
-
+  
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchDepartments();
     fetchEmails();
   }, []);
-
+  
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("/api/department/getAllDepartment");
+      const token = getCookie("token");
+      const response = await axios.get(`/api/department/getAllDepartment`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }, withCredentials: true 
+        }
+      );
+      console.log(response.data); // Check if data is being fetched correctly
       setDepartments(response.data.data);
     } catch (error) {
       console.error(
@@ -35,12 +48,17 @@ const CreateMyAsk = () => {
       );
     }
   };
+  
 
   const fetchCompanies = async (searchTerm) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/company/getFilteredGives?companyName=${searchTerm}`,
-        { withCredentials: true }
+        { headers: {
+          Authorization: `Bearer ${token}`,
+        },
+           withCredentials: true }
       );
       setCompanyOptions(
         Array.isArray(response.data.companies) ? response.data.companies : []
@@ -55,9 +73,13 @@ const CreateMyAsk = () => {
 
   const fetchCompanyId = async (companyName) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/company/getCompanyByName?companyName=${companyName}`,
-        { withCredentials: true }
+        { 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },withCredentials: true }
       );
       if (response.data.company) {
         setMyAsk((prevMyAsk) => ({
@@ -85,13 +107,18 @@ const CreateMyAsk = () => {
     }));
     if (newValue) {
       debouncedFetchCompanies(newValue);
-      fetchCompanyId(newValue); // Fetch companyId when companyName changes
+      // Removed fetchCompanyId(newValue);
     }
   };
+  
 
   const fetchEmails = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get("/api/member/getAllmemberDropdown", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       setEmails(response.data.data);
@@ -115,10 +142,14 @@ const CreateMyAsk = () => {
     e.preventDefault();
 
     try {
+      const token = getCookie("token");
       await axios.post("/api/myAsk/addMyAskByEmail", myAsk, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
-      navigate(`/myAsks/${userId}`);
+      navigate(`/allAsks`);
     } catch (error) {
       console.error(
         "Failed to create My Ask:",
@@ -135,7 +166,7 @@ const CreateMyAsk = () => {
             Dashboard /
           </Link>
           <Link
-            to={`/myAsks/${userId}`}
+            to={`/allAsks`}
             className="mr-2 text-red-300 hover:text-red-500"
           >
             My Asks /

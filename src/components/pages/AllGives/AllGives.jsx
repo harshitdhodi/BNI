@@ -14,14 +14,23 @@ const AllGives = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [isSearching, setIsSearching] = useState(false);
   const pageSize = 5;
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   const fetchCompanies = async (searchValue = "", page = 1) => {
     try {
+      const token = getCookie("token");
       setIsSearching(!!searchValue);
       const url = searchValue
         ? `/api/myGives/getFilteredGives?companyName=${searchValue}`
         : `/api/myGives/getMyAllGives?page=${page}`;
-      const response = await axios.get(url, { withCredentials: true });
+      const response = await axios.get(url, { 
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true });
 
       console.log("API Response:", response.data);
 
@@ -67,7 +76,11 @@ const AllGives = () => {
 
   const handleDelete = async (id) => {
     try {
+      const token = getCookie("token");
       await axios.delete(`/api/myGives/deletemyGivesById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       fetchCompanies(value, currentPage);

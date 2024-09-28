@@ -61,13 +61,13 @@ const Sidebar = () => {
           title: "Cities",
           path: "/cities",
         },
-        {
-          title: "Chapter",
-          path: "/ChapterList",
-          icon: <GrChapterAdd />,
-          text: "Chapters",
-          submenu: [],
-        },
+        // {
+        //   title: "Chapter",
+        //   path: "/ChapterList",
+        //   icon: <GrChapterAdd />,
+        //   text: "Chapters",
+        //   submenu: [],
+        // },
         {
           title: "Industry ",
           path: "/industryList",
@@ -150,7 +150,7 @@ const Sidebar = () => {
             : "min-h-[95%] -translate-x-80  lg:translate-x-0"
         } ${isSidebarCollapsed ? "lg:w-16" : "lg:w-52"} w-52`}
       >
-        <div className="flex justify-between items-center px-4 py-3 lg:hidden">
+        <div className="flex justify-between items-center px-4 py-3 bg-gray-200 lg:hidden">
           <div className="font-bold w-full text-white mt-2 text-xl flex justify-center items-center">
             <span className="text-[40px] font-BNiFont">B-CONN</span>{" "}
             {/* Apply custom font here */}
@@ -236,8 +236,8 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      <div className="flex flex-col h-screen w-full">
-        <Navbar className="fixed w-full z-50" toggleSidebar={toggleSidebar} />
+      <div className="flex flex-col h-screen w-full bg-gray-200">
+        <Navbar className="fixed w-full bg-gray-200 z-50" toggleSidebar={toggleSidebar} />
         <div className="flex-1 overflow-y-auto ">
           <Outlet />
         </div>

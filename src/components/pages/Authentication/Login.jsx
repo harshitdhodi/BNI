@@ -9,7 +9,11 @@ const LoginForm = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -39,10 +43,13 @@ const LoginForm = () => {
     }
 
     try {
+      const token = getCookie("token");
       const response = await axios.post(
         "/api/user/login",
         { email, password },
-        { withCredentials: true }
+        {  headers: {
+          Authorization: `Bearer ${token}`,
+        }, withCredentials: true }
       );
       setIsLoading(false);
       if (response.data.status === "success") {

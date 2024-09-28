@@ -18,20 +18,34 @@ const AddBusiness = () => {
   const [catalog, setCatalog] = useState(null);
   const navigate = useNavigate();
   const { userId } = useParams();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        const response = await axios.get("/industry/getAllIndustry");
-        setIndustries(response.data.data);
+        const response = await axios.get("/api/industry/getAllIndustry" , {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        });
+        if (response.data && response.data.data) {
+          setIndustries(response.data.data); // Ensure data is present
+        } else {
+          setIndustries([]); // Fallback in case data is empty or malformed
+        }
       } catch (error) {
         console.error("Error fetching industries:", error);
-        setIndustries([]);
+        setIndustries([]); // Set an empty array in case of error
       }
     };
-
+  
     fetchIndustries();
   }, []);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,12 +67,14 @@ const AddBusiness = () => {
     console.log("FormData:", formData);
 
     try {
+      const token = getCookie("token");
       const response = await axios.post(
         `/api/business/createProfile?user=${userId}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -158,25 +174,30 @@ const AddBusiness = () => {
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-bold mb-2">
-              Industry Name
-            </label>
-            <select
-              value={industryName}
-              onChange={(e) => setIndustryName(e.target.value)}
-              className="lg:w-1/2 w-full px-4 py-2 border rounded-md focus:outline-none focus:border-red-500 transition duration-300"
-              required
-            >
-              <option value="" disabled>
-                Select Industry
-              </option>
-              {industries.map((industry) => (
-                <option key={industry._id} value={industry.name}>
-                  {industry.name}
-                </option>
-              ))}
-            </select>
-          </div>
+  <label className="block text-gray-700 font-bold mb-2">
+    Industry Name
+  </label>
+  <select
+    value={industryName}
+    onChange={(e) => setIndustryName(e.target.value)}
+    className="lg:w-1/2 w-full px-4 py-2 border rounded-md focus:outline-none focus:border-red-500 transition duration-300"
+    required
+  >
+    <option value="" disabled>
+      Select Industry
+    </option>
+    {industries && industries.length > 0 ? (
+      industries.map((industry) => (
+        <option key={industry._id} value={industry.name}>
+          {industry.name}
+        </option>
+      ))
+    ) : (
+      <option disabled>No industries available</option>
+    )}
+  </select>
+</div>
+
           <div className="mb-4">
             <label className="block text-gray-700 font-bold mb-2">
               Designation

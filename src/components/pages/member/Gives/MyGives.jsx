@@ -11,16 +11,24 @@ const MyGivesList = () => {
 
   // Accessing userId from route parameters using useParams
   const { userId } = useParams();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchMyGives();
   }, [pageIndex, userId]); // Fetch data when pageIndex or userId changes
 
   const fetchMyGives = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/myGives/getMyGives?userId=${userId}&page=${pageIndex + 1}`,
-        { withCredentials: true }
+        { 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },withCredentials: true }
       );
 
       console.log("My Gives Response:", response.data); // Check response data structure
@@ -66,7 +74,11 @@ const MyGivesList = () => {
 
   const handleDelete = async (id) => {
     try {
+      const token = getCookie("token");
       await axios.delete(`/api/myGives/deletemyGivesById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       fetchMyGives(); // Fetch data again after deletion

@@ -6,16 +6,24 @@ const EditDepartment = () => {
   const { id } = useParams();
   const [name, setName] = useState("");
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchDepartment();
   }, [id]);
 
   const fetchDepartment = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/department/getDepartmentById?id=${id}`,
-        { withCredentials: true }
+        { headers: {
+          Authorization: `Bearer ${token}`,
+        },
+           withCredentials: true }
       );
       const { name } = response.data;
       setName(name);
@@ -30,10 +38,13 @@ const EditDepartment = () => {
     const departmentData = { name };
 
     try {
+      const token = getCookie("token");
       await axios.put(
         `/api/department/updateDepartmentById?id=${id}`,
         departmentData,
-        { withCredentials: true }
+        { headers: {
+          Authorization: `Bearer ${token}`,
+        }, withCredentials: true }
       );
       setName("");
       navigate("/departmentList");

@@ -4,7 +4,6 @@ import axios from "axios";
 import { Country } from "country-state-city";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import Chip from "@mui/material/Chip";
 
 const CreateUser = () => {
   const [loading, setLoading] = useState(false);
@@ -14,25 +13,36 @@ const CreateUser = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [country, setCountry] = useState(null);
   const [city, setCity] = useState(null);
-  const [chapter, setChapter] = useState(null);
   const [mobile, setMobile] = useState("");
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
-  const [chapters, setChapters] = useState([]);
-  const [keywords, setKeywords] = useState([]);
-  const [keywordInput, setKeywordInput] = useState("");
   const [profileImg, setProfileImg] = useState(null);
   const [bannerImg, setBannerImg] = useState(null);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     setCountries(Country.getAllCountries());
   }, []);
 
   useEffect(() => {
+    const getCookie = (name) => {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(";").shift();
+    };
     if (country) {
+      const token = getCookie("token");
       axios
-        .get(`/api/city/getCityByCountry?countryName=${country.name}`)
+        .get(`/api/city/getCityByCountry?countryName=${country.name}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        })
         .then((response) => {
           const citiesData = response.data;
           if (Array.isArray(citiesData)) {
@@ -50,39 +60,6 @@ const CreateUser = () => {
     }
   }, [country]);
 
-  useEffect(() => {
-    if (city) {
-      axios
-        .get(`/api/chapter/getChapterByCity?city=${city.name}`)
-        .then((response) => {
-          const chaptersData = response.data;
-          if (Array.isArray(chaptersData)) {
-            setChapters(chaptersData);
-          } else {
-            setChapters([]);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching chapters:", error);
-          setChapters([]);
-        });
-    } else {
-      setChapters([]);
-    }
-  }, [city]);
-
-  const handleAddKeyword = (event) => {
-    event.preventDefault();
-    if (keywordInput.trim() !== "") {
-      setKeywords([...keywords, keywordInput.trim()]);
-      setKeywordInput("");
-    }
-  };
-
-  const handleDeleteKeyword = (keywordToDelete) => {
-    setKeywords(keywords.filter((kw) => kw !== keywordToDelete));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -91,9 +68,6 @@ const CreateUser = () => {
       return;
     }
 
-    // Convert keywords array to a single string
-    const keywordString = keywords.join(", "); // Adjust the delimiter as needed
-
     const formData = new FormData();
     formData.append("name", name);
     formData.append("email", email);
@@ -101,17 +75,17 @@ const CreateUser = () => {
     formData.append("confirm_password", confirmPassword);
     formData.append("country", country ? country.name : "");
     formData.append("city", city ? city.name : "");
-    formData.append("chapter", chapter ? chapter.name : "");
     formData.append("mobile", mobile);
-    formData.append("keyword", keywordString); // Use keywordString here
     if (profileImg) formData.append("profileImg", profileImg);
     if (bannerImg) formData.append("bannerImg", bannerImg);
-
+console.log(formData)
     try {
-      // setLoading(true); // Set loading state to true++
-      const response = await axios.post("/api/member/register", formData, {
+      const token = getCookie("token");
+      setLoading(true);
+      const response = await axios.post("/api/member/member-register", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -124,7 +98,7 @@ const CreateUser = () => {
         error.response ? error.response.data : error.message
       );
     } finally {
-      setLoading(false); // Set loading state to false
+      setLoading(false);
     }
   };
 
@@ -139,7 +113,6 @@ const CreateUser = () => {
             to="/memberList"
             className="mr-2 text-red-300 hover:text-red-600"
           >
-            {" "}
             Members /
           </Link>
           <Link className="font-bold text-red-500"> Insert User</Link>
@@ -154,7 +127,7 @@ const CreateUser = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full p-[15px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
+              className="w-full p-[10px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
               required
             />
           </div>
@@ -164,19 +137,17 @@ const CreateUser = () => {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-[15px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
+              className="w-full p-[10px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
               required
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">
-              Password
-            </label>
+            <label className="block text-gray-700 font-bold mb-2">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-[15px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
+              className="w-full p-[10px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
               required
             />
           </div>
@@ -188,14 +159,12 @@ const CreateUser = () => {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full p-[15px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
+              className="w-full p-[10px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
               required
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">
-              Country
-            </label>
+            <label className="block text-gray-700 font-bold mb-2">Country</label>
             <Autocomplete
               options={countries}
               getOptionLabel={(option) => option.name}
@@ -233,93 +202,36 @@ const CreateUser = () => {
           </div>
           <div>
             <label className="block text-gray-700 font-bold mb-2">
-              Chapter
-            </label>
-            <Autocomplete
-              options={chapters}
-              getOptionLabel={(option) => option.name}
-              value={chapter}
-              onChange={(event, newValue) => setChapter(newValue)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Select Chapter"
-                  variant="outlined"
-                  className="w-full"
-                  required
-                  disabled={!city}
-                />
-              )}
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700 font-bold mb-2">
               Mobile Number
             </label>
             <input
               type="text"
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
-              className="w-full p-[15px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
+              className="w-full p-[10px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
               required
             />
           </div>
-          <div className="col-span-2">
-            <label className="block text-gray-700 font-bold mb-2">
-              Keyword
-            </label>
-            <div className="flex">
-              <input
-                type="text"
-                value={keywordInput}
-                onChange={(e) => setKeywordInput(e.target.value)}
-                className="flex-grow p-[15px] border rounded-l-md focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
-                placeholder="Enter a keyword"
-              />
-              <button
-                type="button"
-                onClick={handleAddKeyword}
-                className="px-4 py-2 bg-red-500 text-white font-bold rounded-r-md hover:bg-red-600 transition duration-300"
-              >
-                Add
-              </button>
-            </div>
-            <div className="mt-2">
-              {keywords.map((kw, index) => (
-                <Chip
-                  key={index}
-                  label={kw}
-                  onDelete={() => handleDeleteKeyword(kw)}
-                  color="primary"
-                  className="mr-1 mb-1"
-                />
-              ))}
-            </div>
-          </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">
-              Profile Image
-            </label>
+            <label className="block text-gray-700 font-bold mb-2">Profile Image</label>
             <input
               type="file"
               onChange={(e) => setProfileImg(e.target.files[0])}
-              className="w-full p-[15px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
+              className="w-full p-[10px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
             />
           </div>
           <div>
-            <label className="block text-gray-700 font-bold mb-2">
-              Banner Image
-            </label>
+            <label className="block text-gray-700 font-bold mb-2">Banner Image</label>
             <input
               type="file"
               onChange={(e) => setBannerImg(e.target.files[0])}
-              className="w-full p-[15px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
+              className="w-full p-[10px] border rounded focus:outline-none focus:border-red-500 transition duration-300 bg-[#F1F1F1] border-[#aeabab]"
             />
           </div>
           <div className="col-span-2">
             <button
               type="submit"
-              className="w-full py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600 transition duration-300"
+              className="w-1/4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600 transition duration-300"
             >
               Create User
             </button>

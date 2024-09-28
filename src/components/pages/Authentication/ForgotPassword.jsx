@@ -5,11 +5,20 @@ import axios from "axios"; // Import axios
 const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
   const navigate = useNavigate(); // Initialize useNavigate
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/user/forgot-password", { email });
+      const token = getCookie("token");
+      const response = await axios.post("/api/user/forgot-password", { email }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },      withCredentials: true,
+      });
 
       if (response.status === 200) {
         console.log("Email submitted:", email);

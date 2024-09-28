@@ -5,16 +5,22 @@ import axios from "axios";
 const CreateIndustry = () => {
   const [name, setName] = useState("");
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const industryData = { name };
 
     try {
+      const token = getCookie("token");
       const response = await axios.post("/api/industry/addIndustry", industryData, {
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         withCredentials: true,
       });

@@ -51,6 +51,8 @@ import CreateMyGivesByEmail from "./components/pages/AllGives/AddMyGives";
 import CompanyList from "./components/pages/company/showCompanies";
 import AddCompany from "./components/pages/company/AddCompany";
 import EditCompany from "./components/pages/company/EditCompany";
+import RefMember from "./components/pages/member/RefMember/RefMember";
+import PendingMember from "./components/pages/member/PendingMember/PendingMember";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -130,6 +132,8 @@ function App() {
             <Route path="/company" element={<CompanyList />} />
             <Route path="/add_company" element={<AddCompany />} />
             <Route path="/edit_company/:id" element={<EditCompany />} />
+            <Route path="/ref-member/:refMember" element={<RefMember />} />
+            <Route path="/pending-member" element={<PendingMember />} />
           </Route>
         )}
       </Routes>

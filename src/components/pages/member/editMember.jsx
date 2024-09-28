@@ -23,7 +23,11 @@ const EditMember = () => {
   const [cities, setCities] = useState([]);
   const [chapters, setChapters] = useState([]);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchMember();
     fetchCountries();
@@ -43,7 +47,11 @@ const EditMember = () => {
 
   const fetchMember = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/member/getUserById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       const memberData = response.data.data;
@@ -55,7 +63,11 @@ const EditMember = () => {
 
   const fetchCountries = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/country/getCountry?page=1&limit=100`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       setCountries(response.data.data);
@@ -66,7 +78,11 @@ const EditMember = () => {
 
   const fetchCities = async (country) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/city/getAllCity?country=${country}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       setCities(response.data.data);
@@ -78,9 +94,13 @@ const EditMember = () => {
 
   const fetchChapters = async (city) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/chapter/getChapterByCity?city=${city}`,
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }, withCredentials: true }
       );
       setChapters(response.data || []);
     } catch (error) {
@@ -156,6 +176,7 @@ const EditMember = () => {
     e.preventDefault();
 
     try {
+      const token = getCookie("token");
       const formData = new FormData();
       formData.append("name", member.name);
       formData.append("email", member.email);
@@ -172,6 +193,7 @@ const EditMember = () => {
       await axios.put(`/api/member/updatememberById?id=${id}`, formData, {
         withCredentials: true,
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       });
@@ -207,8 +229,13 @@ const EditMember = () => {
             (key) =>
               key !== "_id" &&
               key !== "resetOTP" &&
+              key !== "deviceTokens" && // Exclude deviceToken field
               key !== "password" &&
               key !== "confirm_password" &&
+              key !== "ref_member" &&
+              key !== "approvedByadmin" &&
+              key !== "approvedBymember" &&
+              key !== "refral_code" &&
               key !== "__v" && (
                 <div className="mb-4" key={key}>
                   <label htmlFor={key} className="block font-semibold mb-2">
@@ -231,7 +258,7 @@ const EditMember = () => {
                           {...params}
                           variant="outlined"
                           className="w-full p-2 border rounded focus:outline-none  focus:border-black-500"
-                          required
+                          
                         />
                       )}
                     />
@@ -249,7 +276,7 @@ const EditMember = () => {
                           {...params}
                           variant="outlined"
                           className="w-full p-2 border rounded focus:outline-none focus:border-red-500"
-                          required
+                          
                         />
                       )}
                     />
@@ -269,7 +296,7 @@ const EditMember = () => {
                           {...params}
                           variant="outlined"
                           className="w-full p-2 border rounded focus:outline-none hover:border-red-500"
-                          required
+                          
                         />
                       )}
                     />
@@ -290,7 +317,7 @@ const EditMember = () => {
                       {member[key] && (
                         <div className="mt-2">
                           <img
-                            src={`/image/download/${member[key]}`}
+                            src={`/api/image/download/${member[key]}`}
                             alt=""
                             className="w-20 h-20 object-cover rounded"
                           />
@@ -299,25 +326,26 @@ const EditMember = () => {
                     </>
                   ) : (
                     <input
-                      type={key === "keyword" ? "text" : "text"}
+                      type="text"
                       id={key}
                       name={key}
                       value={member[key]}
                       onChange={handleChange}
-                      className="w-full p-4 border bg-[#F1F1F1] border-[#aeabab] rounded focus:outline-none focus:border-black hover:border-black"
-                      required
+                      className="w-full p-4 border border-[#aeabab] rounded focus:outline-none focus:border-red-500"
+                      
                     />
                   )}
                 </div>
               )
           )}
-          <br />
-          <button
-            type="submit"
-            className="px-4 py-2 w-[5cm] bg-red-500 text-white rounded hover:bg-red-600 transition duration-300"
-          >
-            Save
-          </button>
+          <div className="col-span-2 mb-4">
+            <button
+              type="submit"
+              className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded"
+            >
+              Update Member
+            </button>
+          </div>
         </form>
       </div>
     </>

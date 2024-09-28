@@ -15,14 +15,25 @@ const CreateMyGives = () => {
   const [companyOptions, setCompanyOptions] = useState([]);
   const navigate = useNavigate();
   const { userId } = useParams();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchDepartments();
   }, []);
 
+  // Fetch departments
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("/api/department/getAllDepartment");
+      const token = getCookie("token");
+      const response = await axios.get(`/api/department/getAllDepartment` , {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       setDepartments(
         Array.isArray(response.data.data) ? response.data.data : []
       );
@@ -34,11 +45,17 @@ const CreateMyGives = () => {
     }
   };
 
+  // Fetch companies based on search term
   const fetchCompanies = async (searchTerm) => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/company/getFilteredGives?companyName=${searchTerm}`,
-        { withCredentials: true }
+        { 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true }
       );
       setCompanyOptions(
         Array.isArray(response.data.companies) ? response.data.companies : []
@@ -51,15 +68,18 @@ const CreateMyGives = () => {
     }
   };
 
+  // Debounce company name fetch
   const debouncedFetchCompanies = debounce((searchTerm) => {
     fetchCompanies(searchTerm);
   }, 300);
 
+  // Handle company name input change
   const handleCompanyNameChange = (event, newValue) => {
     setCompanyName(newValue);
     debouncedFetchCompanies(newValue);
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -72,12 +92,14 @@ const CreateMyGives = () => {
     };
 
     try {
+      const token = getCookie("token");
       const response = await axios.post(
         `/api/myGives/addMyGives?user=${userId}`,
         myGivesData,
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -119,18 +141,13 @@ const CreateMyGives = () => {
             </label>
             <Autocomplete
               freeSolo
-              options={companyOptions}
-              getOptionLabel={(option) => option.companyName || ""} // Ensure this returns a string
-              value={
-                companyOptions.find(
-                  (option) => option.companyName === companyName
-                ) || null
-              }
+              options={companyOptions.map((company) => company.companyName)}
+              value={companyName}
               onInputChange={handleCompanyNameChange}
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Select or Add Company Name"
+                  label="Add Company Name"
                   variant="outlined"
                   className="w-full"
                   required
@@ -177,15 +194,9 @@ const CreateMyGives = () => {
               Department
             </label>
             <Autocomplete
-              options={departments}
-              getOptionLabel={(option) => option.name || ""} // Ensure this returns a string
-              value={
-                departments.find((department) => department.name === dept) ||
-                null
-              }
-              onChange={(event, newValue) => {
-                setDept(newValue ? newValue.name : "");
-              }}
+              options={departments.map((dept) => dept.name)}
+              value={dept}
+              onInputChange={(event, newValue) => setDept(newValue)}
               renderInput={(params) => (
                 <TextField
                   {...params}

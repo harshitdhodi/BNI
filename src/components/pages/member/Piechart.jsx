@@ -11,18 +11,32 @@ const PieChart = () => {
   const [data, setData] = useState({ asks: 0, gives: 0, matches: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = getCookie("token");
         // Fetch data from the endpoints
         const asksResponse = await axios.get("/api/myAsk/getTotalAsks", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           withCredentials: true,
         });
         const givesResponse = await axios.get("/api/myGives/totalGives", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           withCredentials: true,
         });
         const matchesResponse = await axios.get("/api/match2/getTotalMatches", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           withCredentials: true,
         });
         // console.log(asksResponse.data.TotalMyAsks)

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -5,6 +6,7 @@ import { FaEdit, FaTrashAlt, FaEye } from "react-icons/fa";
 import { BsFillTelephoneFill } from "react-icons/bs";
 import { MdEmail, MdPlace } from "react-icons/md";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import Badge from "@mui/material/Badge";
 
 const MemberList = () => {
   const [member, setMember] = useState([]);
@@ -17,6 +19,11 @@ const MemberList = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const pageSize = 5;
 
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     if (cache[pageIndex]) {
       setMember(cache[pageIndex].data);
@@ -32,8 +39,12 @@ const MemberList = () => {
 
   const fetchMember = async () => {
     try {
-      const response = await axios.get(
-        `/api/member/getAllmember?page=${pageIndex + 1}`
+      const token = getCookie("token");
+      const response = await axios.get(`/api/member/getApprovedMember`,
+        { 
+          headers: {
+          Authorization: `Bearer ${token}`,
+        },withCredentials: true }
       );
       const dataWithIds = response.data.data.map((customer, index) => ({
         ...customer,
@@ -72,7 +83,11 @@ const MemberList = () => {
 
   const handleDelete = async (id) => {
     try {
+      const token = getCookie("token");
       await axios.delete(`/api/member/deletememberById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       window.location.reload();
@@ -140,7 +155,7 @@ const MemberList = () => {
               <strong>Name:</strong> {member.name}
             </p>
             <p>
-              <strong>Chapter:</strong> {member.chapter}
+              {/* <strong>Chapter:</strong> {member.chapter} */}
             </p>
             <p>
               <strong>Mobile:</strong> {member.mobile}
@@ -154,9 +169,9 @@ const MemberList = () => {
             <p>
               <strong>City:</strong> {member.city}
             </p>
-            <p>
+            {/* <p>
               <strong>Keyword:</strong> {member.keyword}
-            </p>
+            </p> */}
           </div>
           <button
             onClick={onClose}
@@ -181,6 +196,9 @@ const MemberList = () => {
             placeholder="Search..."
             className="p-2 border border-gray-300 rounded mr-3"
           />
+          <button className="px-4 py-2 mr-3 mt-3 bg-[#CF2030] text-white rounded hover:bg-red-600 transition duration-300">
+            <Link to="/pending-member">Pending Members</Link>
+          </button>
           <button className="px-4 py-2 mt-3 bg-[#CF2030] text-white rounded hover:bg-red-600 transition duration-300">
             <Link to="/createCustomer">Add New Members</Link>
           </button>
@@ -204,9 +222,9 @@ const MemberList = () => {
             <tr className="bg-[#CF2030] text-white text-left font-serif text-[14px]">
               <th className="py-2 px-4 lg:px-6">ID</th>
               <th className="py-2 px-4 lg:px-6">Member Name</th>
-              <th className="py-2 px-4 lg:px-6">Chapter</th>
+              {/* <th className="py-2 px-4 lg:px-6">Chapter</th> */}
               <th className="py-2 px-4 lg:px-6 text-center">Info</th>
-              <th className="py-2 px-4 lg:px-6 w-[10px]">Keyword</th>
+              {/* <th className="py-2 px-4 lg:px-6 w-[10px]">Keyword</th> */}
               <th className="py-2 px-4 lg:px-6 text-center">Actions</th>
             </tr>
           </thead>
@@ -219,7 +237,7 @@ const MemberList = () => {
                 >
                   <td className="py-2 px-4 lg:px-6">{customer.id}</td>
                   <td className="py-2 px-4 lg:px-6">{customer.name}</td>
-                  <td className="py-2 px-4 lg:px-6">{customer.chapter}</td>
+                  {/* <td className="py-2 px-4 lg:px-6">{customer.chapter}</td> */}
                   <td className="py-2 px-4 lg:px-6">
                     <div>
                       <p className="flex items-center gap-1 ">
@@ -236,11 +254,11 @@ const MemberList = () => {
                       </p>
                     </div>
                   </td>
-                  <td className="py-2 px-4 lg:px-6 w-[10px]">
+                  {/* <td className="py-2 px-4 lg:px-6 w-[10px]">
                     {Array.isArray(customer.keyword)
                       ? customer.keyword.join(", ")
                       : customer.keyword}
-                  </td>
+                  </td> */}
                   <td className="py-2 px-4 lg:px-6">
                     <div className="flex flex-wrap py-1 px-2 lg:px-4 items-center gap-x-2">
                       <FaEye
@@ -261,6 +279,19 @@ const MemberList = () => {
                       <button onClick={() => handleDelete(customer._id)}>
                         <FaTrashAlt className="text-red-500 text-lg" />
                       </button>
+                      <Badge
+                        badgeContent={customer?.referralCount || 0}
+                        color="primary"
+                        className="mr-3"
+                      >
+                        <Link to={`/ref-member/${customer?.refral_code}`}>
+                          <button className="bg-green-500 mt-2 mb-1 lg:mt-0 lg:w-full w-[2cm] flex justify-center items-center gap-2 text-white px-2 py-1 rounded hover:bg-green-700 transition">
+                            {/* <FaGift className="text-lg" /> */}
+                            <p>Ref Member</p>
+                          </button>
+                        </Link>
+                      </Badge>
+
                       <Link to={`/myGives/${customer._id}`}>
                         <button className="bg-green-500 mt-2 mb-1 lg:mt-0 lg:w-full w-[2cm] flex justify-center items-center gap-2 text-white px-2 py-1 rounded hover:bg-green-700 transition">
                           {/* <FaGift className="text-lg" /> */}
@@ -302,7 +333,7 @@ const MemberList = () => {
             <th>Member Name</th>
             <th>Chapter</th>
             <th>Info</th>
-            <th>Keyword</th>
+            {/* <th>Keyword</th> */}
           </tr>
         </thead>
         <tbody>
@@ -311,15 +342,15 @@ const MemberList = () => {
               <tr key={customer._id}>
                 <td>{customer.id}</td>
                 <td>{customer.name}</td>
-                <td>{customer.chapter}</td>
+                {/* <td>{customer.chapter}</td> */}
                 <td>
                   {`${customer.mobile}, ${customer.email}, ${customer.country}, ${customer.city}`}
                 </td>
-                <td>
+                {/* <td>
                   {Array.isArray(customer.keyword)
                     ? customer.keyword.join(", ")
                     : customer.keyword}
-                </td>
+                </td> */}
               </tr>
             )
           )}

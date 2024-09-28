@@ -4,7 +4,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { IoLogoWhatsapp } from "react-icons/io";
 import { FaFacebook, FaTwitterSquare, FaLinkedin } from "react-icons/fa";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-
+import { FaTimes } from 'react-icons/fa';
 const CompanyList = () => {
   const [companies, setCompanies] = useState([]);
   const [pageIndex, setPageIndex] = useState(0);
@@ -15,16 +15,23 @@ const CompanyList = () => {
   const [showCompanyModal, setShowCompanyModal] = useState(false);
   const [companyNames, setCompanyNames] = useState([]);
   const [showFindCompanyModal, setShowFindCompanyModal] = useState(false);
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchCompanies();
   }, [pageIndex, userId]);
 
   const fetchCompanies = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(
         `/api/company/getAllCompany?page=${pageIndex + 1}`,
-        { withCredentials: true, timeout: 5000 }
+        {   headers: {
+          Authorization: `Bearer ${token}`,
+        }, withCredentials: true, timeout: 5000 }
       );
       console.log(response.data.data);
       if (response.data && response.data.data) {
@@ -44,7 +51,11 @@ const CompanyList = () => {
 
   const fetchCompanyNames = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get("/api/company/getNonExistingCompanyNames", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
         timeout: 5000,
       });
@@ -63,7 +74,11 @@ const CompanyList = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this company?")) {
       try {
+        const token = getCookie("token");
         const response = await axios.delete("/api/company/deleteCompany", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           params: { id },
           withCredentials: true,
         });
@@ -223,16 +238,23 @@ const CompanyList = () => {
         <div className="bg-white p-6 rounded shadow-lg max-w-full mx-auto overflow-y-auto">
           <h2 className="text-xl font-bold mb-4">Company Names</h2>
           <div className="grid grid-cols-3 gap-4 mb-4">
-            {paginatedCompanies.map((company, index) => (
-              <div
-                key={index}
-                onClick={() => handleCompanyClick(company)}
-                className="p-2 border rounded bg-gray-100 cursor-pointer hover:bg-gray-200"
-              >
-                {company}
-              </div>
-            ))}
+      {paginatedCompanies.map((company, index) => (
+        <div
+          key={index}
+          className="relative p-2 border rounded bg-gray-100 cursor-pointer hover:bg-gray-200"
+        >
+          <div onClick={() => handleCompanyClick(company)}>
+            {company} {/* Adjust according to your company object structure */}
           </div>
+          {/* <div
+            onClick={() => handleRemoveCompany(company.id)} // Replace with the actual ID or identifier
+            className="absolute top-0 right-0 p-1 text-red-500 cursor-pointer"
+          >
+            <FaTimes /> 
+          </div> */}
+        </div>
+      ))}
+    </div>
           <div className="flex justify-between mt-4">
             <button
               onClick={handlePreviousPage}
@@ -252,12 +274,17 @@ const CompanyList = () => {
               Next
             </button>
           </div>
-          <button
+      <div className="flex gap-5">
+      <button
             onClick={onClose}
             className="mt-4 bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded"
           >
             Close
           </button>
+          <button className="mt-4 bg-red-600 hover:bg-red-900 px-3 py-1 text-white rounded">
+             <Link to="/add_company">Add Own Company</Link>
+          </button>
+      </div>
         </div>
       </div>
     );
@@ -419,6 +446,7 @@ const CompanyList = () => {
       {showFindCompanyModal && (
         <FindCompanyModal
           companies={companyNames}
+        
           onClose={closeFindCompanyModal}
         />
       )}

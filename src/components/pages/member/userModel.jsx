@@ -12,7 +12,7 @@ const MemberImageModal = ({ isOpen, closeModal, bannerImg, profileImg }) => {
         <div className="flex justify-center space-x-8">
           <div>
             <img
-              src={`api/image/download/${bannerImg}`}
+              src={`/api/image/download/${bannerImg}`}
               alt="Banner Image"
               className="max-w-full h-auto"
             />
@@ -20,7 +20,7 @@ const MemberImageModal = ({ isOpen, closeModal, bannerImg, profileImg }) => {
           </div>
           <div>
             <img
-              src={`api/image/download/${profileImg}`}
+              src={`/api/image/download/${profileImg}`}
               alt="Profile Image"
               className="max-w-full h-auto"
             />

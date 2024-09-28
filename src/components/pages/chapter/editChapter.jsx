@@ -11,14 +11,22 @@ const EditChapter = () => {
   const [city, setCity] = useState(null);
   const [cities, setCities] = useState([]);
   const navigate = useNavigate();
-
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
   useEffect(() => {
     fetchChapter();
   }, [id]);
 
   const fetchChapter = async () => {
     try {
+      const token = getCookie("token");
       const response = await axios.get(`/api/chapter/getchapterById?id=${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       const { name, countryName, city } = response.data;
@@ -93,7 +101,11 @@ const EditChapter = () => {
     };
 
     try {
+      const token = getCookie("token");
       await axios.put(`/api/chapter/updateChapter?id=${id}`, chapterData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         withCredentials: true,
       });
       setName("");
